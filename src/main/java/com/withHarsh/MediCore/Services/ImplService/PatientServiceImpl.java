@@ -1,9 +1,12 @@
 package com.withHarsh.MediCore.Services.ImplService;
 
+import com.withHarsh.MediCore.DTO.PatientResponceDTO;
 import com.withHarsh.MediCore.DTO.ProfileRequestDTO;
 import com.withHarsh.MediCore.DTO.ProfileResponceDTO;
+import com.withHarsh.MediCore.Entity.Docter;
 import com.withHarsh.MediCore.Entity.Patient;
 import com.withHarsh.MediCore.Entity.User;
+import com.withHarsh.MediCore.Repository.DocterRepository;
 import com.withHarsh.MediCore.Repository.PatientRepository;
 import com.withHarsh.MediCore.Repository.UserRepository;
 import com.withHarsh.MediCore.Services.PatientServices;
@@ -13,12 +16,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PatientServiceImpl implements PatientServices {
 
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;
+    private final DocterRepository docterRepository;
 
     @Override
     public ProfileResponceDTO getProfile(Authentication authentication) {
@@ -101,4 +107,26 @@ public class PatientServiceImpl implements PatientServices {
                 user.getCreated_at()
         );
     }
+
+    @Override
+    public List<PatientResponceDTO> fetchAllDocters() {
+
+        List<Docter> docters = docterRepository.findAll();
+
+        List<PatientResponceDTO> responceDTOList = docters
+                .stream()
+                .map(docter -> new PatientResponceDTO(
+                        docter.getId(),
+                        docter.getUser().getName(),
+                        docter.getSpecialization(),
+                                docter.getExperianceInYears(),
+                        docter.isAvailibility_stutus()
+                                )
+                        )
+                .toList();
+
+        return responceDTOList;
+    }
+
+
 }

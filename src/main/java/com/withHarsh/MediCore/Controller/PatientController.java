@@ -1,13 +1,17 @@
 package com.withHarsh.MediCore.Controller;
 
+import com.withHarsh.MediCore.DTO.PatientResponceDTO;
 import com.withHarsh.MediCore.DTO.ProfileRequestDTO;
 import com.withHarsh.MediCore.DTO.ProfileResponceDTO;
 import com.withHarsh.MediCore.Services.PatientServices;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/patients")
@@ -24,5 +28,15 @@ public class PatientController {
     @PutMapping("/profile")
     public ResponseEntity<ProfileResponceDTO> UpdateProfile(@Valid @RequestBody ProfileRequestDTO profileRequestDTO, Authentication authentication) {
         return ResponseEntity.ok(patientServices.updateProfile(profileRequestDTO, authentication));
+    }
+
+    @GetMapping("/docters")
+    public ResponseEntity<List<PatientResponceDTO>> fetchAllDocters() {
+        return ResponseEntity.ok(patientServices.fetchAllDocters());
+    }
+
+    @PostMapping("/appointments")
+    public ResponseEntity<AppointmentResponceDTO> createAppointment(@RequestBody AppointmentRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(patientServices.createAppointment(requestDTO));
     }
 }
