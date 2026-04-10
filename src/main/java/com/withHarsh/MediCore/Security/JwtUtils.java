@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -18,13 +19,13 @@ public class JwtUtils {
 
     private int JwtExpiration = 172800000; // for 48 hr
 
-//    public String getJwtFromHeaders(HttpServletRequest request) {
-//        String bearerToken = request.getHeader("Authorization");
-//
-//        if(bearerToken != null && bearerToken.startsWith("Bearer "))
-//            return bearerToken.substring(7);
-//        return null;
-//    }
+    public String getJwtFromHeaders(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+
+        if(bearerToken != null && bearerToken.startsWith("Bearer "))
+            return bearerToken.substring(7);
+        return null;
+    }
 
     public String generateTokenFromUsername(UserDetails userDetails) {
         String email = userDetails.getUsername();
