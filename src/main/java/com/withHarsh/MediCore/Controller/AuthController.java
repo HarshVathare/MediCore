@@ -1,8 +1,11 @@
 package com.withHarsh.MediCore.Controller;
 
+import com.withHarsh.MediCore.DTO.LoginRequestDTO;
+import com.withHarsh.MediCore.DTO.LoginResponceDTO;
 import com.withHarsh.MediCore.DTO.RegisterRequestDTO;
 import com.withHarsh.MediCore.DTO.RegisterResponceDTO;
 import com.withHarsh.MediCore.Services.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,5 +23,10 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponceDTO> register(@RequestBody RegisterRequestDTO registerRequestDTO) {
         return ResponseEntity.ok(authService.register(registerRequestDTO));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponceDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+        return ResponseEntity.ok(authService.login(loginRequestDTO));
     }
 }
