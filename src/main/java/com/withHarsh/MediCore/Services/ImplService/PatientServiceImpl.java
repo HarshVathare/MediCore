@@ -23,8 +23,11 @@ public class PatientServiceImpl implements PatientServices {
     @Override
     public ProfileResponceDTO getProfile(Authentication authentication) {
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String email = userDetails.getUsername();
+        Object principal = authentication.getPrincipal();
+
+        String email = principal.toString();
+
+        System.out.println("Email: " + email);
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -50,29 +53,41 @@ public class PatientServiceImpl implements PatientServices {
     @Override
     public ProfileResponceDTO updateProfile(ProfileRequestDTO profileRequestDTO, Authentication authentication) {
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String email = userDetails.getUsername();
+        // Best way to get email
+        String email = authentication.getName();
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // ✅ Update user
-        user.setName(profileRequestDTO.getName());
-        user.setEmail(profileRequestDTO.getEmail());
+        // Update only if not null (safe update)
+        if (profileRequestDTO.getName() != null) {
+            user.setName(profileRequestDTO.getName());
+        }
 
-        // ✅ Fetch existing patient
+        // ⚠Avoid updating email directly (JWT issue)
+        // user.setEmail(profileRequestDTO.getEmail());
+
+        // Fetch existing patient
         Patient patient = patientRepository.findByUser(user);
 
         if (patient == null) {
             throw new RuntimeException("Patient not found");
         }
 
-        // ✅ Update patient fields
-        patient.setAge(profileRequestDTO.getAge());
-        patient.setGender(profileRequestDTO.getGender());
-        patient.setMedicalHistory(profileRequestDTO.getMedicalRecord());
+        // Update patient fields
+        if (profileRequestDTO.getAge() != null) {
+            patient.setAge(profileRequestDTO.getAge());
+        }
 
-        // ✅ Save (cascade will handle patient)
+        if (profileRequestDTO.getGender() != null) {
+            patient.setGender(profileRequestDTO.getGender());
+        }
+
+        if (profileRequestDTO.getMedicalRecord() != null) {
+            patient.setMedicalHistory(profileRequestDTO.getMedicalRecord());
+        }
+
+        // Save
         userRepository.save(user);
 
         return new ProfileResponceDTO(
