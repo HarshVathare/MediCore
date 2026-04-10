@@ -61,27 +61,20 @@ public class AuthService {
     public @Nullable LoginResponceDTO login(LoginRequestDTO loginRequestDTO) {
 
         Authentication authentication = authenticationManager.authenticate(
-               new UsernamePasswordAuthenticationToken(
-                       loginRequestDTO.getEmail(),
-                       loginRequestDTO.getPassword()
-               )
+                new UsernamePasswordAuthenticationToken(
+                         loginRequestDTO.getEmail(),
+                         loginRequestDTO.getPassword()
+                )
         );
 
-        // Get authenticated user (usually UserDetails)
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        // Generate JWT token
         String token = jwtUtils.generateTokenFromUsername(userDetails);
+        System.out.println("Token :- "+token);
 
-        System.out.println("Generated JWT: " + token);
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // ✅ Fetch full user from DB
-        User user = (User) userRepository.findByEmail(userDetails.getUsername());
-
-        return new LoginResponceDTO(
-                token,
-                user.getId(),
-                user.getEmail()
-        );
+        return new LoginResponceDTO(token, user.getId(), user.getEmail());
     }
 }

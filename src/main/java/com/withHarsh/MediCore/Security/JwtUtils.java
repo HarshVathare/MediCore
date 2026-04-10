@@ -27,10 +27,10 @@ public class JwtUtils {
 //    }
 
     public String generateTokenFromUsername(UserDetails userDetails) {
-        String userName = userDetails.getUsername();
+        String email = userDetails.getUsername();
 
         return Jwts.builder()
-                .subject(userName)
+                .subject(email)
                 .claim("role",userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .toList())
