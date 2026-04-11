@@ -22,7 +22,6 @@ public class RegisterResponceDTO {
     private String name;
     private String email;
     private RoleType role;
-//    private Patient patient;
     private LocalDateTime updated_At;
     private LocalDateTime created_at;
 }

@@ -3,6 +3,7 @@ package com.withHarsh.MediCore.Controller;
 import com.withHarsh.MediCore.DTO.CreateDocterRequestDTO;
 import com.withHarsh.MediCore.DTO.CreateDocterResponceDTO;
 import com.withHarsh.MediCore.DTO.PatientResponceDTO;
+import com.withHarsh.MediCore.DTO.RegisterResponceDTO;
 import com.withHarsh.MediCore.Services.AdminServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,9 +30,9 @@ public class AdminController {
         return ResponseEntity.ok(adminServices.fetchAllDocters());
     }
 
-    @DeleteMapping("/docter/{id}")
-    public ResponseEntity<String> deleteDocterById(@PathVariable Long id) {
-        return ResponseEntity.ok(adminServices.deleteDocterById(id));
+    @GetMapping("/users")
+    public ResponseEntity<List<RegisterResponceDTO>> fetchAllUsers() {
+        return ResponseEntity.ok(adminServices.fetchAllUsers());
     }
 
 

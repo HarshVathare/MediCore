@@ -3,6 +3,7 @@ package com.withHarsh.MediCore.Services.ImplService;
 import com.withHarsh.MediCore.DTO.CreateDocterRequestDTO;
 import com.withHarsh.MediCore.DTO.CreateDocterResponceDTO;
 import com.withHarsh.MediCore.DTO.PatientResponceDTO;
+import com.withHarsh.MediCore.DTO.RegisterResponceDTO;
 import com.withHarsh.MediCore.Entity.Docter;
 import com.withHarsh.MediCore.Entity.User;
 import com.withHarsh.MediCore.Entity.type.RoleType;
@@ -89,6 +90,24 @@ public class AdminServiceImpl implements AdminServices {
         userRepository.delete(user);
 
         return "Docter deleted Successfully ..!";
+    }
+
+    @Override
+    public List<RegisterResponceDTO> fetchAllUsers() {
+
+        List<User> users = userRepository.findAll();
+
+        List<RegisterResponceDTO> responceDTOList = users.stream()
+                .map(user -> new RegisterResponceDTO(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getRole(),
+                        user.getUpdated_At(),
+                        user.getCreated_at()
+                )).toList();
+
+        return responceDTOList;
     }
 
 
