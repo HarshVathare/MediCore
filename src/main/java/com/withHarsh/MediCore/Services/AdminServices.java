@@ -17,4 +17,6 @@ public interface AdminServices {
     String deleteDocterById(Long id);
 
     List<RegisterResponceDTO> fetchAllUsers();
+
+    String deleteUserById(Long id);
 }

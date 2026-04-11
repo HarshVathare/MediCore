@@ -110,5 +110,16 @@ public class AdminServiceImpl implements AdminServices {
         return responceDTOList;
     }
 
+    @Override
+    public String deleteUserById(Long id) {
+
+        User user = userRepository.findById(id).orElseThrow(()->
+                new IllegalArgumentException("User not found by Id : "+ id));
+
+        userRepository.delete(user);
+
+        return "User deleted Successfully ..!";
+    }
+
 
 }
