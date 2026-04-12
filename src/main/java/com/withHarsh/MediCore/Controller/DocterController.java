@@ -1,9 +1,6 @@
 package com.withHarsh.MediCore.Controller;
 
-import com.withHarsh.MediCore.DTO.DocterProfileRequestDTO;
-import com.withHarsh.MediCore.DTO.DocterProfileResponceDTO;
-import com.withHarsh.MediCore.DTO.ProfileRequestDTO;
-import com.withHarsh.MediCore.DTO.ProfileResponceDTO;
+import com.withHarsh.MediCore.DTO.*;
 import com.withHarsh.MediCore.Services.DocterServices;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/docters")
@@ -29,5 +28,8 @@ public class DocterController {
         return ResponseEntity.ok(docterServices.updateProfile(docterProfileRequestDTO, authentication));
     }
 
-
+    @GetMapping("/appointments")
+    public ResponseEntity<List<DocterAppointmentResponceDTO>> getAppointments(Authentication authentication) {
+        return ResponseEntity.ok(docterServices.getAppointments(authentication));
+    }
 }

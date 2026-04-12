@@ -1,13 +1,16 @@
 package com.withHarsh.MediCore.Services.ImplService;
 
+import com.withHarsh.MediCore.DTO.DocterAppointmentResponceDTO;
 import com.withHarsh.MediCore.DTO.DocterProfileRequestDTO;
 import com.withHarsh.MediCore.DTO.DocterProfileResponceDTO;
 
 import com.withHarsh.MediCore.DTO.ProfileResponceDTO;
+import com.withHarsh.MediCore.Entity.Appointment;
 import com.withHarsh.MediCore.Entity.Docter;
 
 import com.withHarsh.MediCore.Entity.Patient;
 import com.withHarsh.MediCore.Entity.User;
+import com.withHarsh.MediCore.Repository.AppointmentRepository;
 import com.withHarsh.MediCore.Repository.DocterRepository;
 import com.withHarsh.MediCore.Repository.UserRepository;
 import com.withHarsh.MediCore.Services.DocterServices;
@@ -15,15 +18,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DocterServiceImpl implements DocterServices {
 
     private final UserRepository userRepository;
     private final DocterRepository docterRepository;
+    private final AppointmentRepository appointmentRepository;
 
-    public DocterServiceImpl(UserRepository userRepository, DocterRepository docterRepository) {
+    public DocterServiceImpl(UserRepository userRepository, DocterRepository docterRepository,
+                             AppointmentRepository appointmentRepository) {
         this.userRepository = userRepository;
         this.docterRepository = docterRepository;
+        this.appointmentRepository = appointmentRepository;
     }
 
 
@@ -110,5 +118,39 @@ public class DocterServiceImpl implements DocterServices {
 
 
     }
+
+    @Override
+    public List<DocterAppointmentResponceDTO> getAppointments(Authentication authentication) {
+
+        Object principle = authentication.getPrincipal();
+        String email = principle.toString();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Long user_Id = user.getId();
+
+        Docter docter = docterRepository.findByUser_Id(user_Id);
+        Long docter_Id = docter.getId(); //docter id 10
+
+        List<Appointment> appointments = appointmentRepository.findAllByDocter_Id(docter_Id);
+
+        //Convert to DTO
+        List<DocterAppointmentResponceDTO> responceDTOList = appointments.stream()
+                .map(appointment -> new DocterAppointmentResponceDTO(
+                        appointment.getId(),
+                        appointment.getPatient().getId(),
+                        appointment.getAppointmentTime(),
+                        appointment.getPatient().getUser().getName(),
+                        appointment.getPatient().getUser().getEmail(),
+                        appointment.getPatient().getAge(),
+                        appointment.getPatient().getGender(),
+                        appointment.getPatient().getMedicalHistory(),
+                        appointment.getCreatedAt()
+                )).toList();
+
+        return responceDTOList;
+    }
+
 
 }
