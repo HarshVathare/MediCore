@@ -20,6 +20,5 @@ public interface PatientServices {
 
     PatientResponceDTO getDocterById(Long id);
 
-
-
+    List<AppointmentResponceDTO> getAppointments(Authentication authentication);
 }

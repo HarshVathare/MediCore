@@ -146,8 +146,6 @@ public class PatientServiceImpl implements PatientServices {
         );
     }
 
-
-
     @Transactional
     @Override
     public AppointmentResponceDTO createAppointment(AppointmentRequestDTO requestDTO, Authentication authentication) {
@@ -188,6 +186,7 @@ public class PatientServiceImpl implements PatientServices {
 
         return new AppointmentResponceDTO(
                 appointment.getId(),
+                appointment.getPatient().getId(),
                 appointment.getDocter().getUser().getName(),
                 appointment.getPatient().getUser().getName(),
                 appointment.getAppointmentTime(),
@@ -197,7 +196,35 @@ public class PatientServiceImpl implements PatientServices {
 
     }
 
+    @Override
+    public List<AppointmentResponceDTO> getAppointments(Authentication authentication) {
 
+        Object principal = authentication.getPrincipal();
+        String email = principal.toString();
+        User user = userRepository.findByEmail(email).orElseThrow(()->
+                new IllegalArgumentException("User not found by email : "+email));
+
+        Long user_Id = user.getId();
+
+        Patient patient = patientRepository.findByUser_Id(user_Id);
+        Long patient_Id = patient.getId(); //2
+
+        List<Appointment> appointments = appointmentRepository.findAllByPatient_Id(patient_Id);
+
+        List<AppointmentResponceDTO> responceDTOList = appointments.stream()
+                .map(appointment -> new AppointmentResponceDTO(
+                        appointment.getId(),
+                        appointment.getPatient().getId(),
+                        appointment.getDocter().getUser().getName(),
+                        appointment.getPatient().getUser().getName(),
+                        appointment.getAppointmentTime(),
+                        appointment.getAppointmentStatus(),
+                        appointment.getCreatedAt()
+                )).toList();
+
+
+        return responceDTOList;
+    }
 
 
 }
