@@ -16,7 +16,7 @@ public interface PatientServices {
 
     List<PatientResponceDTO> fetchAllDocters();
 
-    AppointmentResponceDTO createAppointment(AppointmentRequestDTO requestDTO);
+    AppointmentResponceDTO createAppointment(AppointmentRequestDTO requestDTO, Authentication authentication);
 
     PatientResponceDTO getDocterById(Long id);
 

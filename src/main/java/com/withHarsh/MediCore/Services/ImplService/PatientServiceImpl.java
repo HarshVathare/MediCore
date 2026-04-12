@@ -131,53 +131,6 @@ public class PatientServiceImpl implements PatientServices {
         return responceDTOList;
     }
 
-    @Transactional
-    @Override
-    public AppointmentResponceDTO createAppointment(AppointmentRequestDTO requestDTO) {
-        Docter doctor = docterRepository.findById(requestDTO.getDocter_Id())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Doctor not found by id: " + requestDTO.getDocter_Id()));
-
-        Patient patient = patientRepository.findById(requestDTO.getPatient_Id())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Patient not found by id: " + requestDTO.getPatient_Id()));
-
-        if (requestDTO.getAppointment_Date() == null) {
-            throw new IllegalArgumentException("Appointment date cannot be null");
-        }
-
-        if (!doctor.isAvailibility_stutus()) {
-            throw new RuntimeException("Doctor is not available");
-        }
-
-        Appointment appointment = new Appointment();
-        appointment.setAppointmentTime(requestDTO.getAppointment_Date());
-        appointment.setAppointmentStatus(AppointType.PENDING);
-
-        //  Set relationship (ONLY THIS IS NEEDED)
-        Docter docter1 = new Docter();
-        Patient patient1 = new Patient();
-
-        appointment.setDocter(doctor);
-        appointment.setPatient(patient);
-
-        docter1.setAppointment((List<Appointment>) appointment);
-        patient1.setAppointment((List<Appointment>) appointment);
-
-        //  Save
-        appointmentRepository.save(appointment);
-
-        return new AppointmentResponceDTO(
-                appointment.getId(),
-                doctor.getUser().getName(),
-                patient.getUser().getName(),
-                appointment.getAppointmentTime(),
-                appointment.getAppointmentStatus(),
-                appointment.getCreatedAt()
-        );
-
-    }
-
     @Override
     public PatientResponceDTO getDocterById(Long id) {
 
@@ -192,6 +145,59 @@ public class PatientServiceImpl implements PatientServices {
                 docter.isAvailibility_stutus()
         );
     }
+
+
+
+    @Transactional
+    @Override
+    public AppointmentResponceDTO createAppointment(AppointmentRequestDTO requestDTO, Authentication authentication) {
+
+        Object principal = authentication.getPrincipal();
+        String email = principal.toString();
+        System.out.println(email);
+
+        User user = userRepository.findByEmail(email).orElseThrow(()->
+                new IllegalArgumentException("Email not found by email : "+email));
+
+        Long user_Id = user.getId(); //get user id = 4
+
+        Patient patient = patientRepository.findByUser_Id(user_Id);
+        Long patient_Id = patient.getId();
+
+        Docter doctor = docterRepository.findById(requestDTO.getDocter_Id())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Doctor not found by id: " + requestDTO.getDocter_Id()));
+
+
+        if (requestDTO.getAppointment_Date() == null) {
+            throw new IllegalArgumentException("Appointment date cannot be null");
+        }
+
+        if (!doctor.isAvailibility_stutus()) {
+            throw new RuntimeException("Doctor is not available");
+        }
+
+        Appointment appointment = new Appointment();
+        appointment.setAppointmentTime(requestDTO.getAppointment_Date());
+        appointment.setAppointmentStatus(AppointType.PENDING);
+
+        appointment.setPatient(patient);
+        appointment.setDocter(doctor);
+        //  Save
+        appointmentRepository.save(appointment);
+
+        return new AppointmentResponceDTO(
+                appointment.getId(),
+                appointment.getDocter().getUser().getName(),
+                appointment.getPatient().getUser().getName(),
+                appointment.getAppointmentTime(),
+                appointment.getAppointmentStatus(),
+                appointment.getCreatedAt()
+        );
+
+    }
+
+
 
 
 }

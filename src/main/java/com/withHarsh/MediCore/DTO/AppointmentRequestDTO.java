@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class AppointmentRequestDTO {
 
     private Long Docter_Id;
-    private Long Patient_Id;
+//    private Long Patient_Id;
     private LocalDateTime Appointment_Date;
 
 }
