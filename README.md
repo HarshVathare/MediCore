@@ -1,4 +1,4 @@
-# 🏥 Hospital Management System - Backend API
+# 🏥 Medicore - Hospital Management System - Backend API
 
 This project is a **Spring Boot-based Hospital Management System** that provides REST APIs for managing patients, doctors, appointments, medical records, and authentication.
 
