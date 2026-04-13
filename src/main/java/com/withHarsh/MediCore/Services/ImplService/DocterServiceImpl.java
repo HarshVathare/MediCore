@@ -176,26 +176,24 @@ public class DocterServiceImpl implements DocterServices {
         return "Appointment Confirmed ..!";
     }
 
+    @Transactional
     @Override
     public MedicalRecordResponceDTO createMedicalRecord(Long appointmentId, MedicalRecordRequestDTO requestDTO) {
 
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
 
-        // ✅ Check if already completed
         if (appointment.getAppointmentStatus() == AppointType.COMPLETED) {
-            throw new IllegalStateException("Medical record already created for this appointment");
+            throw new IllegalStateException("Medical record already created");
         }
 
         Docter doctor = appointment.getDocter();
         Patient patient = appointment.getPatient();
 
-        // ✅ Create Prescription
         Prescription prescription = new Prescription();
         prescription.setMedicine(requestDTO.getPrescription());
         prescription.setNotes(requestDTO.getNotes());
 
-        // ✅ Create Medical Record
         Medical_Records record = new Medical_Records();
         record.setDiagnoses(requestDTO.getDiagnosis());
         record.setDocter(doctor);
@@ -203,17 +201,19 @@ public class DocterServiceImpl implements DocterServices {
         record.setAppointment(appointment);
         record.setPrescription(prescription);
 
-        // ✅ If bidirectional mapping
         prescription.setMedicalRecords(record);
 
-        // ✅ Save (ensure cascade = ALL)
         medical_RecordsRepository.save(record);
 
         // ✅ Update appointment
-        appointment.setAppointmentStatus(AppointType.valueOf("COMPLETED"));
+        appointment.setAppointmentStatus(AppointType.COMPLETED);
+
+        // ✅ Update doctor
         doctor.setAvailibility_stutus(true);
 
+        // ✅ Save both explicitly
         appointmentRepository.save(appointment);
+        docterRepository.save(doctor);
 
         return new MedicalRecordResponceDTO(
                 record.getId(),
@@ -225,6 +225,7 @@ public class DocterServiceImpl implements DocterServices {
                 prescription.getNotes(),
                 record.getCreatedAt()
         );
+
     }
 
 

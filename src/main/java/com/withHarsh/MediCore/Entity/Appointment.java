@@ -32,6 +32,7 @@ public class Appointment {
     private LocalDateTime appointmentTime;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "appointment_status")
     private AppointType appointmentStatus;
 
     @UpdateTimestamp
