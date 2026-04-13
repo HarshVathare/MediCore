@@ -1,9 +1,6 @@
 package com.withHarsh.MediCore.Services;
 
-import com.withHarsh.MediCore.DTO.DocterAppointmentResponceDTO;
-import com.withHarsh.MediCore.DTO.DocterProfileRequestDTO;
-import com.withHarsh.MediCore.DTO.DocterProfileResponceDTO;
-import com.withHarsh.MediCore.DTO.UpdateAppointmentRequestDTO;
+import com.withHarsh.MediCore.DTO.*;
 import jakarta.validation.Valid;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
@@ -20,4 +17,6 @@ public interface DocterServices {
     List<DocterAppointmentResponceDTO> getAppointments(Authentication authentication);
 
     String updateAppointmentStatus(Long id, UpdateAppointmentRequestDTO requestDTO);
+
+    MedicalRecordResponceDTO createMedicalRecord(Long appointmentId ,MedicalRecordRequestDTO requestDTO);
 }

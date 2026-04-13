@@ -2,14 +2,12 @@ package com.withHarsh.MediCore.Services.ImplService;
 
 import com.withHarsh.MediCore.DTO.*;
 
-import com.withHarsh.MediCore.Entity.Appointment;
-import com.withHarsh.MediCore.Entity.Docter;
+import com.withHarsh.MediCore.Entity.*;
 
-import com.withHarsh.MediCore.Entity.Patient;
-import com.withHarsh.MediCore.Entity.User;
 import com.withHarsh.MediCore.Entity.type.AppointType;
 import com.withHarsh.MediCore.Repository.AppointmentRepository;
 import com.withHarsh.MediCore.Repository.DocterRepository;
+import com.withHarsh.MediCore.Repository.Medical_RecordsRepository;
 import com.withHarsh.MediCore.Repository.UserRepository;
 import com.withHarsh.MediCore.Services.DocterServices;
 import jakarta.transaction.Transactional;
@@ -25,12 +23,15 @@ public class DocterServiceImpl implements DocterServices {
     private final UserRepository userRepository;
     private final DocterRepository docterRepository;
     private final AppointmentRepository appointmentRepository;
+    private final Medical_RecordsRepository medical_RecordsRepository;
 
     public DocterServiceImpl(UserRepository userRepository, DocterRepository docterRepository,
-                             AppointmentRepository appointmentRepository) {
+                             AppointmentRepository appointmentRepository,
+                             Medical_RecordsRepository medical_RecordsRepository) {
         this.userRepository = userRepository;
         this.docterRepository = docterRepository;
         this.appointmentRepository = appointmentRepository;
+        this.medical_RecordsRepository = medical_RecordsRepository;
     }
 
 
@@ -174,6 +175,101 @@ public class DocterServiceImpl implements DocterServices {
 
         return "Appointment Confirmed ..!";
     }
+
+    @Override
+    public MedicalRecordResponceDTO createMedicalRecord(Long appointmentId, MedicalRecordRequestDTO requestDTO) {
+
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+
+        // ✅ Check if already completed
+        if (appointment.getAppointmentStatus() == AppointType.COMPLETED) {
+            throw new IllegalStateException("Medical record already created for this appointment");
+        }
+
+        Docter doctor = appointment.getDocter();
+        Patient patient = appointment.getPatient();
+
+        // ✅ Create Prescription
+        Prescription prescription = new Prescription();
+        prescription.setMedicine(requestDTO.getPrescription());
+        prescription.setNotes(requestDTO.getNotes());
+
+        // ✅ Create Medical Record
+        Medical_Records record = new Medical_Records();
+        record.setDiagnoses(requestDTO.getDiagnosis());
+        record.setDocter(doctor);
+        record.setPatient(patient);
+        record.setAppointment(appointment);
+        record.setPrescription(prescription);
+
+        // ✅ If bidirectional mapping
+        prescription.setMedicalRecords(record);
+
+        // ✅ Save (ensure cascade = ALL)
+        medical_RecordsRepository.save(record);
+
+        // ✅ Update appointment
+        appointment.setAppointmentStatus(AppointType.valueOf("COMPLETED"));
+        doctor.setAvailibility_stutus(true);
+
+        appointmentRepository.save(appointment);
+
+        return new MedicalRecordResponceDTO(
+                record.getId(),
+                patient.getId(),
+                doctor.getUser().getName(),
+                patient.getUser().getName(),
+                record.getDiagnoses(),
+                prescription.getMedicine(),
+                prescription.getNotes(),
+                record.getCreatedAt()
+        );
+    }
+
+
+
+//    @Override
+//    public MedicalRecordResponceDTO createMedicalRecord(Long appointmentId ,MedicalRecordRequestDTO requestDTO) {
+//
+//        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(()->
+//                new IllegalArgumentException("Appointment not found"));
+//
+//        Docter docter = appointment.getDocter();
+//        Patient patient = appointment.getPatient();
+//
+//        Medical_Records records = new Medical_Records();
+//        records.setDiagnoses(requestDTO.getDiagnosis());
+//        records.setDocter(docter);
+//        records.setPatient(patient);
+//        records.setAppointment(appointment);
+//
+//        Prescription prescription = new Prescription();
+//        prescription.setMedicine(requestDTO.getPrescription());
+//        prescription.setNotes(requestDTO.getNotes());
+//
+//        records.setPrescription(prescription);
+//
+//        medical_RecordsRepository.save(records);
+//
+//        //update appointment status & docter is available
+//        appointment.setAppointmentStatus(AppointType.COMPLETED);
+//        docter.setAvailibility_stutus(true);
+//
+//        appointmentRepository.save(appointment);
+//
+//
+//        return new MedicalRecordResponceDTO(
+//                records.getId(),
+//                patient.getId(),
+//                docter.getUser().getName(),
+//                patient.getUser().getName(),
+//                records.getDiagnoses(),
+//                prescription.getMedicine(),
+//                prescription.getNotes(),
+//                records.getCreatedAt()
+//        );
+//    }
 
 
 }

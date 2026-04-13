@@ -4,6 +4,7 @@ import com.withHarsh.MediCore.DTO.*;
 import com.withHarsh.MediCore.Services.DocterServices;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -36,6 +37,11 @@ public class DocterController {
     @PutMapping("/appointments/{id}/status")
     public ResponseEntity<String> updateAppointmentStatus(@PathVariable Long id, @RequestBody UpdateAppointmentRequestDTO requestDTO) {
         return ResponseEntity.ok(docterServices.updateAppointmentStatus(id, requestDTO));
+    }
+
+    @PostMapping("/{appointmentId}/medical-record")
+    public ResponseEntity<MedicalRecordResponceDTO> createMedicalRecord(@PathVariable Long appointmentId, @RequestBody MedicalRecordRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(docterServices.createMedicalRecord(appointmentId ,requestDTO));
     }
 
 }

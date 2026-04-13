@@ -32,6 +32,10 @@ public class Medical_Records {
     @JoinColumn(name = "prescription_Id")
     private Prescription prescription;
 
+    @OneToOne
+    @JoinColumn(name = "appointment_Id")
+    private Appointment appointment;
+
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 

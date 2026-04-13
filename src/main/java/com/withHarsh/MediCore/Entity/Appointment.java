@@ -1,5 +1,6 @@
 package com.withHarsh.MediCore.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.withHarsh.MediCore.Entity.type.AppointType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -38,5 +39,9 @@ public class Appointment {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "appointment")
+    private Medical_Records medicalRecords;
 
 }
