@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface DocterServices {
 
-
     DocterProfileResponceDTO getProfile(Authentication authentication);
 
     DocterProfileResponceDTO updateProfile(@Valid DocterProfileRequestDTO docterProfileRequestDTO, Authentication authentication);
@@ -19,4 +18,6 @@ public interface DocterServices {
     String updateAppointmentStatus(Long id, UpdateAppointmentRequestDTO requestDTO);
 
     MedicalRecordResponceDTO createMedicalRecord(Long appointmentId ,MedicalRecordRequestDTO requestDTO);
+
+    List<MedicalRecordResponceDTO> getMedicalRecordByPatientId(Long patientId);
 }

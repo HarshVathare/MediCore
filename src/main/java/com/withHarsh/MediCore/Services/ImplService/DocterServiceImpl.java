@@ -5,10 +5,7 @@ import com.withHarsh.MediCore.DTO.*;
 import com.withHarsh.MediCore.Entity.*;
 
 import com.withHarsh.MediCore.Entity.type.AppointType;
-import com.withHarsh.MediCore.Repository.AppointmentRepository;
-import com.withHarsh.MediCore.Repository.DocterRepository;
-import com.withHarsh.MediCore.Repository.Medical_RecordsRepository;
-import com.withHarsh.MediCore.Repository.UserRepository;
+import com.withHarsh.MediCore.Repository.*;
 import com.withHarsh.MediCore.Services.DocterServices;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.Authentication;
@@ -24,14 +21,17 @@ public class DocterServiceImpl implements DocterServices {
     private final DocterRepository docterRepository;
     private final AppointmentRepository appointmentRepository;
     private final Medical_RecordsRepository medical_RecordsRepository;
+    private final PatientRepository patientRepository;
 
     public DocterServiceImpl(UserRepository userRepository, DocterRepository docterRepository,
                              AppointmentRepository appointmentRepository,
-                             Medical_RecordsRepository medical_RecordsRepository) {
+                             Medical_RecordsRepository medical_RecordsRepository,
+                             PatientRepository patientRepository) {
         this.userRepository = userRepository;
         this.docterRepository = docterRepository;
         this.appointmentRepository = appointmentRepository;
         this.medical_RecordsRepository = medical_RecordsRepository;
+        this.patientRepository = patientRepository;
     }
 
 
@@ -228,49 +228,28 @@ public class DocterServiceImpl implements DocterServices {
 
     }
 
+    @Override
+    public List<MedicalRecordResponceDTO> getMedicalRecordByPatientId(Long patientId) {
 
+        Patient patient = patientRepository.findById(patientId).orElseThrow(()->
+                new IllegalArgumentException("Patient Not found"));
 
-//    @Override
-//    public MedicalRecordResponceDTO createMedicalRecord(Long appointmentId ,MedicalRecordRequestDTO requestDTO) {
-//
-//        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(()->
-//                new IllegalArgumentException("Appointment not found"));
-//
-//        Docter docter = appointment.getDocter();
-//        Patient patient = appointment.getPatient();
-//
-//        Medical_Records records = new Medical_Records();
-//        records.setDiagnoses(requestDTO.getDiagnosis());
-//        records.setDocter(docter);
-//        records.setPatient(patient);
-//        records.setAppointment(appointment);
-//
-//        Prescription prescription = new Prescription();
-//        prescription.setMedicine(requestDTO.getPrescription());
-//        prescription.setNotes(requestDTO.getNotes());
-//
-//        records.setPrescription(prescription);
-//
-//        medical_RecordsRepository.save(records);
-//
-//        //update appointment status & docter is available
-//        appointment.setAppointmentStatus(AppointType.COMPLETED);
-//        docter.setAvailibility_stutus(true);
-//
-//        appointmentRepository.save(appointment);
-//
-//
-//        return new MedicalRecordResponceDTO(
-//                records.getId(),
-//                patient.getId(),
-//                docter.getUser().getName(),
-//                patient.getUser().getName(),
-//                records.getDiagnoses(),
-//                prescription.getMedicine(),
-//                prescription.getNotes(),
-//                records.getCreatedAt()
-//        );
-//    }
+        List<Medical_Records> medicalRecords = medical_RecordsRepository.findAllByPatient_Id(patientId);
+
+        List<MedicalRecordResponceDTO> medicalRecordResponceDTOList = medicalRecords.stream()
+                .map(records-> new MedicalRecordResponceDTO(
+                        records.getId(),
+                        records.getPatient().getId(),
+                        records.getDocter().getUser().getName(),
+                        records.getPatient().getUser().getName(),
+                        records.getDiagnoses(),
+                        records.getPrescription().getMedicine(),
+                        records.getPrescription().getNotes(),
+                        records.getCreatedAt()
+                )).toList();
+
+        return medicalRecordResponceDTOList;
+    }
 
 
 }
