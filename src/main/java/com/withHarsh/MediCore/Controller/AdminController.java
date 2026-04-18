@@ -31,11 +31,11 @@ public class AdminController {
             @RequestParam(required = false) String experienceInYears
     ) {
 
-        if (specialization != null && experienceInYears != null) {
-            return ResponseEntity.ok(
-                    adminServices.getDoctorBySpecializationAndExperience(specialization, experienceInYears)
-            );
-        }
+//        if (specialization != null && experienceInYears != null) {
+//            return ResponseEntity.ok(
+//                    adminServices.getDoctorBySpecializationAndExperience(specialization, experienceInYears)
+//            );
+//        }
 
         if (specialization != null) {
             return ResponseEntity.ok(adminServices.getDocterBySpecialization(specialization));

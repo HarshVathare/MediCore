@@ -23,4 +23,8 @@ public interface PatientServices {
     List<AppointmentResponceDTO> getAppointments(Authentication authentication);
 
     String deleteAppointment(Long id);
+
+    List<PatientResponceDTO> getDocterByExperience(String experienceInYears);
+
+    List<PatientResponceDTO> getDocterBySpecialization(String specialization);
 }

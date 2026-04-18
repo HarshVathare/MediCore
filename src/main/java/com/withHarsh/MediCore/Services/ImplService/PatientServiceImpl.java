@@ -132,6 +132,42 @@ public class PatientServiceImpl implements PatientServices {
     }
 
     @Override
+    public List<PatientResponceDTO> getDocterBySpecialization(String specialization) {
+
+        List<Docter> docters = docterRepository.findBySpecialization(specialization);
+
+        List<PatientResponceDTO> docterlist = docters
+                .stream()
+                .map(docter -> new PatientResponceDTO(
+                        docter.getId(),
+                        docter.getUser().getName(),
+                        docter.getSpecialization(),
+                        docter.getExperianceInYears(),
+                        docter.isAvailibility_stutus()
+                )).toList();
+
+        return docterlist;
+    }
+
+    @Override
+    public List<PatientResponceDTO> getDocterByExperience(String experience_in_years) {
+
+        List<Docter> docters = docterRepository.findByExperianceInYears(experience_in_years);
+
+        List<PatientResponceDTO> docterlist = docters
+                .stream()
+                .map(docter -> new PatientResponceDTO(
+                        docter.getId(),
+                        docter.getUser().getName(),
+                        docter.getSpecialization(),
+                        docter.getExperianceInYears(),
+                        docter.isAvailibility_stutus()
+                )).toList();
+
+        return docterlist;
+    }
+
+    @Override
     public PatientResponceDTO getDocterById(Long id) {
 
         Docter docter = docterRepository.findById(id).orElseThrow(()->

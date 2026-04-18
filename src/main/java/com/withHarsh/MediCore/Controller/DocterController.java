@@ -61,8 +61,4 @@ public class DocterController {
         return ResponseEntity.ok(docterServices.getDocterBySpecialization(specialization));
     }
 
-//    @GetMapping
-//    public ResponseEntity<>
-
-
 }

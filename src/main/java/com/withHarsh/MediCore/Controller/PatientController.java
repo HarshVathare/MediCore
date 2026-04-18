@@ -29,7 +29,19 @@ public class PatientController {
     }
 
     @GetMapping("/docters")
-    public ResponseEntity<List<PatientResponceDTO>> fetchAllDocters() {
+    public ResponseEntity<List<PatientResponceDTO>> fetchAllDocters(
+            @RequestParam(required = false) String specialization,
+            @RequestParam(required = false) String experienceInYears
+    ) {
+
+        if (specialization != null) {
+            return ResponseEntity.ok(patientServices.getDocterBySpecialization(specialization));
+        }
+
+        if (experienceInYears != null) {
+            return ResponseEntity.ok(patientServices.getDocterByExperience(experienceInYears));
+        }
+
         return ResponseEntity.ok(patientServices.fetchAllDocters());
     }
 
