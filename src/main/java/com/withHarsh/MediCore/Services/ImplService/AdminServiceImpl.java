@@ -122,4 +122,41 @@ public class AdminServiceImpl implements AdminServices {
     }
 
 
+    @Override
+    public List<PatientResponceDTO> getDocterBySpecialization(String specialization) {
+
+        List<Docter> docters = docterRepository.findBySpecialization(specialization);
+
+        List<PatientResponceDTO> docterlist = docters
+                .stream()
+                .map(docter -> new PatientResponceDTO(
+                        docter.getId(),
+                        docter.getUser().getName(),
+                        docter.getSpecialization(),
+                        docter.getExperianceInYears(),
+                        docter.isAvailibility_stutus()
+                )).toList();
+
+        return docterlist;
+    }
+
+    @Override
+    public List<PatientResponceDTO> getDocterByExperience(String experience) {
+
+        List<Docter> docters = docterRepository.findByExperience_In_Years(experience);
+
+        List<PatientResponceDTO> docterlist = docters
+                .stream()
+                .map(docter -> new PatientResponceDTO(
+                        docter.getId(),
+                        docter.getUser().getName(),
+                        docter.getSpecialization(),
+                        docter.getExperianceInYears(),
+                        docter.isAvailibility_stutus()
+                )).toList();
+
+        return docterlist;
+    }
+
+
 }

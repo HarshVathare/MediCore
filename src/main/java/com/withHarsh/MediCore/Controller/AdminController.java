@@ -26,7 +26,17 @@ public class AdminController {
     }
 
     @GetMapping("/docters")
-    public ResponseEntity<List<PatientResponceDTO>> fetchAllDocters() {
+    public ResponseEntity<List<PatientResponceDTO>> fetchAllDocters(
+            @RequestParam(name = "specialization" ) String specialization,
+            @RequestParam(name = "experience") String experience
+    ) {
+
+       if(specialization != null) {
+           return ResponseEntity.ok(adminServices.getDocterBySpecialization(specialization));
+       } else if (experience != null) {
+           return ResponseEntity.ok(adminServices.getDocterByExperience(experience));
+       }
+
         return ResponseEntity.ok(adminServices.fetchAllDocters());
     }
 
