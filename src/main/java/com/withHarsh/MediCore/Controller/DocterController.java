@@ -31,14 +31,17 @@ public class DocterController {
     @GetMapping("/appointments")
     public ResponseEntity<List<DocterAppointmentResponceDTO>> getAppointments(
             @RequestParam(name = "Status", required = false) String Status,
-            Authentication authentication) {
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
 
         if (Status != null) {
             return ResponseEntity.ok(
-                    docterServices.getAppointmentByStatus(Status, authentication));
+                    docterServices.getAppointmentByStatus(Status, authentication, page, size));
         }
 
-        return ResponseEntity.ok(docterServices.getAppointments(authentication));
+        return ResponseEntity.ok(docterServices.getAppointments(authentication, page, size));
     }
 
     @PutMapping("/appointments/{id}/status")

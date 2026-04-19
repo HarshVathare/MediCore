@@ -13,8 +13,6 @@ public interface DocterServices {
 
     DocterProfileResponceDTO updateProfile(@Valid DocterProfileRequestDTO docterProfileRequestDTO, Authentication authentication);
 
-//    List<DocterAppointmentResponceDTO> getAppointments(Authentication authentication);
-
     String updateAppointmentStatus(Long id, UpdateAppointmentRequestDTO requestDTO);
 
     MedicalRecordResponceDTO createMedicalRecord(Long appointmentId ,MedicalRecordRequestDTO requestDTO);
@@ -23,9 +21,8 @@ public interface DocterServices {
 
     List<PatientResponceDTO> getDocterBySpecialization(String specialization,int page, int size);
 
-    List<DocterAppointmentResponceDTO> getAppointmentByStatus(String status, Authentication authentication);
+    List<DocterAppointmentResponceDTO> getAppointmentByStatus(String status, Authentication authentication, int page, int size);
 
-    List<DocterAppointmentResponceDTO> getAppointments(Authentication authentication);
+    List<DocterAppointmentResponceDTO> getAppointments(Authentication authentication, int page, int size);
 
-//    List<AppointmentResponceDTO> getAppointmentByStatus(String status, Authentication authentication);
 }

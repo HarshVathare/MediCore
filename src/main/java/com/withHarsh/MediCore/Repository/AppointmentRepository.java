@@ -13,16 +13,15 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
-//    List<Appointment> findAllByPatient_Id(Long patientId);
-
-    List<Appointment> findAllByDocter_Id(Long docterId);
-
     Appointment findByDocter(Docter docter);
 
-    List<Appointment> findByDocterAndAppointmentStatus(
-            Docter docter,
-            AppointType appointmentStatus);
-
+//    List<Appointment> findByDocterAndAppointmentStatus(
+//            Docter docter,
+//            AppointType appointmentStatus);
 
     Page<Appointment> findAllByPatient_Id(Long patientId, PageRequest request);
+
+    Page<Appointment> findAllByDocter_Id(Long docterId, PageRequest request);
+
+    Page<Appointment> findByDocterAndAppointmentStatus(Docter docter, AppointType appointType, PageRequest request);
 }

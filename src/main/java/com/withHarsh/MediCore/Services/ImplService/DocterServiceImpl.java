@@ -122,7 +122,7 @@ public class DocterServiceImpl implements DocterServices {
     }
 
     @Override
-    public List<DocterAppointmentResponceDTO> getAppointments(Authentication authentication) {
+    public List<DocterAppointmentResponceDTO> getAppointments(Authentication authentication, int page, int size) {
 
         Object principle = authentication.getPrincipal();
         String email = principle.toString();
@@ -132,13 +132,16 @@ public class DocterServiceImpl implements DocterServices {
 
         Long user_Id = user.getId();
 
+        PageRequest request = PageRequest.of(page,size);
+
         Docter docter = docterRepository.findByUser_Id(user_Id);
         Long docter_Id = docter.getId(); //docter id 10
 
-        List<Appointment> appointments = appointmentRepository.findAllByDocter_Id(docter_Id);
+        Page<Appointment> appointments = appointmentRepository.findAllByDocter_Id(docter_Id, request);
 
         //Convert to DTO
-        List<DocterAppointmentResponceDTO> responceDTOList = appointments.stream()
+        return appointments.getContent()
+                .stream()
                 .map(appointment -> new DocterAppointmentResponceDTO(
                         appointment.getId(),
                         appointment.getPatient().getId(),
@@ -152,11 +155,7 @@ public class DocterServiceImpl implements DocterServices {
                         appointment.getAppointmentStatus()
                 )).toList();
 
-        return responceDTOList;
     }
-
-
-
 
     @Override
     @Transactional
@@ -276,7 +275,7 @@ public class DocterServiceImpl implements DocterServices {
     }
 
     @Override
-    public List<DocterAppointmentResponceDTO> getAppointmentByStatus(String status, Authentication authentication) {
+    public List<DocterAppointmentResponceDTO> getAppointmentByStatus(String status, Authentication authentication, int page, int size) {
 
         Object principle = authentication.getPrincipal();
         String email = principle.toString();
@@ -286,6 +285,8 @@ public class DocterServiceImpl implements DocterServices {
 
         Docter docter = docterRepository.findByUser(user);
 
+        PageRequest request = PageRequest.of(page, size);
+
         AppointType appointType;
 
         try {
@@ -294,12 +295,13 @@ public class DocterServiceImpl implements DocterServices {
             throw new IllegalArgumentException("Invalid status value");
         }
 
-        List<Appointment> appointments =
-                appointmentRepository.findByDocterAndAppointmentStatus(docter, appointType);
+        Page<Appointment> appointments =
+                appointmentRepository.findByDocterAndAppointmentStatus(docter, appointType, request);
 
 
         //Convert to DTO
-        List<DocterAppointmentResponceDTO> responceDTOList = appointments.stream()
+        return appointments.getContent()
+                .stream()
                 .map(appointment -> new DocterAppointmentResponceDTO(
                         appointment.getId(),
                         appointment.getPatient().getId(),
@@ -312,9 +314,6 @@ public class DocterServiceImpl implements DocterServices {
                         appointment.getCreatedAt(),
                         appointment.getAppointmentStatus()
                 )).toList();
-
-        return responceDTOList;
-
 
     }
 
