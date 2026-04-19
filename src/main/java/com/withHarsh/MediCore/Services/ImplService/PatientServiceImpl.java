@@ -237,7 +237,7 @@ public class PatientServiceImpl implements PatientServices {
     }
 
     @Override
-    public List<AppointmentResponceDTO> getAppointments(Authentication authentication) {
+    public List<AppointmentResponceDTO> getAppointments(Authentication authentication, int page, int size) {
 
         Object principal = authentication.getPrincipal();
         String email = principal.toString();
@@ -246,12 +246,15 @@ public class PatientServiceImpl implements PatientServices {
 
         Long user_Id = user.getId();
 
+        PageRequest request = PageRequest.of(page, size);
+
         Patient patient = patientRepository.findByUser_Id(user_Id);
         Long patient_Id = patient.getId(); //2
 
-        List<Appointment> appointments = appointmentRepository.findAllByPatient_Id(patient_Id);
+        Page<Appointment> appointments = appointmentRepository.findAllByPatient_Id(patient_Id, request);
 
-        List<AppointmentResponceDTO> responceDTOList = appointments.stream()
+        return appointments.getContent()
+                .stream()
                 .map(appointment -> new AppointmentResponceDTO(
                         appointment.getId(),
                         appointment.getPatient().getId(),
@@ -262,8 +265,6 @@ public class PatientServiceImpl implements PatientServices {
                         appointment.getCreatedAt()
                 )).toList();
 
-
-        return responceDTOList;
     }
 
     @Override

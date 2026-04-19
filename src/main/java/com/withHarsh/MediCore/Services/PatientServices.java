@@ -20,7 +20,7 @@ public interface PatientServices {
 
     PatientResponceDTO getDocterById(Long id);
 
-    List<AppointmentResponceDTO> getAppointments(Authentication authentication);
+    List<AppointmentResponceDTO> getAppointments(Authentication authentication, int page, int size);
 
     String deleteAppointment(Long id);
 

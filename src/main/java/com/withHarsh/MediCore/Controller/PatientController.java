@@ -58,8 +58,12 @@ public class PatientController {
     }
 
     @GetMapping("/appointments")
-    public ResponseEntity<List<AppointmentResponceDTO>> getAppointments(Authentication authentication) {
-        return ResponseEntity.ok(patientServices.getAppointments(authentication));
+    public ResponseEntity<List<AppointmentResponceDTO>> getAppointments(
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size
+    ) {
+        return ResponseEntity.ok(patientServices.getAppointments(authentication, page, size));
     }
 
     @DeleteMapping("/appointments/{id}")
