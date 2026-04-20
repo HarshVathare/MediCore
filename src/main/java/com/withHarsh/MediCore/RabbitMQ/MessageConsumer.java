@@ -16,13 +16,17 @@ public class MessageConsumer {
 
     @RabbitListener(queues = {"${rabbitmq.email.queue.name}"})
     public void consume(AppointmentEmailEventDTO event) {
+        try {
+            log.info("Received message -> {}", event);
 
-        log.info("Received message -> {}", event);
+            emailService.sendEmail(
+                    event.getPatientEmail(),
+                    "🏥 Appointment " + event.getStatus(),
+                    event
+            );
 
-        emailService.sendEmail(
-                event.getPatientEmail(),
-                "🏥 Appointment " + event.getStatus() + " | MediCore",
-                event
-        );
+        } catch (Exception e) {
+            log.error("Error consuming message", e);
+        }
     }
 }

@@ -31,7 +31,7 @@ public class SmtpEmailService {
 
                     <div style="text-align:center;">
                         <img src='cid:logoImage' width='150'/>
-                        <h2 style="color:%s;">Appointment %s</h2>
+                        <h2 style="color:%s;">Appointment %s ..!</h2>
                     </div>
 
                     <p>Dear %s,</p>

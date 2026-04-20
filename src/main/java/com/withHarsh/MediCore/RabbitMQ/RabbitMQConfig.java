@@ -19,9 +19,6 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
 
-    @Value("${rabbitmq.routing.key.pending}")
-    private String pendingrouting_key;
-
     @Bean
     public Queue emailqueue() {
         return new Queue(emailqueue);
@@ -37,8 +34,22 @@ public class RabbitMQConfig {
         return BindingBuilder
                 .bind(emailqueue())
                 .to(exchange())
-                .with(pendingrouting_key);
+                .with("appointment.status.*");
     }
+
+//    @Bean
+//    public Binding confirmedBinding() {
+//        return BindingBuilder.bind(emailqueue())
+//                .to(exchange())
+//                .with("appointment.status.confirmed");
+//    }
+//
+//    @Bean
+//    public Binding cancelledBinding() {
+//        return BindingBuilder.bind(emailqueue())
+//                .to(exchange())
+//                .with("appointment.status.cancelled");
+//    }
 
     @Bean
     public MessageConverter converter () {

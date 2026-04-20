@@ -5,6 +5,8 @@ import com.withHarsh.MediCore.DTO.*;
 import com.withHarsh.MediCore.Entity.*;
 
 import com.withHarsh.MediCore.Entity.type.AppointType;
+import com.withHarsh.MediCore.RabbitMQ.AppointmentEmailEventDTO;
+import com.withHarsh.MediCore.RabbitMQ.MessageProducer;
 import com.withHarsh.MediCore.Repository.*;
 import com.withHarsh.MediCore.Services.DocterServices;
 import jakarta.transaction.Transactional;
@@ -24,16 +26,18 @@ public class DocterServiceImpl implements DocterServices {
     private final AppointmentRepository appointmentRepository;
     private final Medical_RecordsRepository medical_RecordsRepository;
     private final PatientRepository patientRepository;
+    private final MessageProducer producer;
 
     public DocterServiceImpl(UserRepository userRepository, DocterRepository docterRepository,
                              AppointmentRepository appointmentRepository,
                              Medical_RecordsRepository medical_RecordsRepository,
-                             PatientRepository patientRepository) {
+                             PatientRepository patientRepository, MessageProducer producer) {
         this.userRepository = userRepository;
         this.docterRepository = docterRepository;
         this.appointmentRepository = appointmentRepository;
         this.medical_RecordsRepository = medical_RecordsRepository;
         this.patientRepository = patientRepository;
+        this.producer = producer;
     }
 
 
@@ -164,6 +168,8 @@ public class DocterServiceImpl implements DocterServices {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
 
+        Patient patient = patientRepository.findByUser(appointment.getPatient().getUser());
+
         // ✅ update appointment
         if (requestDTO.getAppointment_status() != null) {
             appointment.setAppointmentStatus(requestDTO.getAppointment_status());
@@ -176,6 +182,18 @@ public class DocterServiceImpl implements DocterServices {
         }
 
         appointmentRepository.save(appointment); // cascade should handle doctor
+
+        // 🔥 STEP 1: Build Event DTO (IMPORTANT)
+        AppointmentEmailEventDTO event = new AppointmentEmailEventDTO(
+                appointment.getId(),
+                patient.getUser().getName(),                     // patient name
+                patient.getUser().getEmail(),                    // patient email
+                docter.getUser().getName(),                      // doctor name
+                appointment.getAppointmentTime().toString(),     // time
+                appointment.getAppointmentStatus().name()        // status
+        );
+
+        producer.sendMessage(event);
 
         return "Appointment Confirmed ..!";
     }
