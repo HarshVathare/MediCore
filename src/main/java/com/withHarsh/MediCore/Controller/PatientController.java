@@ -1,15 +1,20 @@
 package com.withHarsh.MediCore.Controller;
 
 import com.withHarsh.MediCore.DTO.*;
+import com.withHarsh.MediCore.Entity.Patient;
 import com.withHarsh.MediCore.RabbitMQ.MessageProducer;
+import com.withHarsh.MediCore.Repository.PatientRepository;
 import com.withHarsh.MediCore.Services.PatientServices;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -19,6 +24,7 @@ public class PatientController {
 
     private final PatientServices patientServices;
     private final MessageProducer producer;
+    private final PatientRepository patientRepository;
 
     @GetMapping("/profile")
     public ResponseEntity<ProfileResponceDTO> getProfile(Authentication authentication) {
@@ -54,12 +60,6 @@ public class PatientController {
         return ResponseEntity.ok(patientServices.getDocterById(id));
     }
 
-
-
-
-
-
-
     @PostMapping("/appointments")
     public ResponseEntity<AppointmentResponceDTO> createAppointment(@RequestBody AppointmentRequestDTO requestDTO , Authentication authentication) {
         return ResponseEntity.status(HttpStatus.CREATED).body(patientServices.createAppointment(requestDTO, authentication));
@@ -77,5 +77,29 @@ public class PatientController {
     @DeleteMapping("/appointments/{id}")
     public ResponseEntity<String> deleteAppointment(@PathVariable Long id) {
         return ResponseEntity.ok(patientServices.deleteAppointment(id));
+    }
+
+    // Upload File API
+    @PostMapping("/{id}/report")
+    public ResponseEntity<String> uploadReport(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+
+        return ResponseEntity.ok(patientServices.uploadReport(id, file));
+    }
+
+    // Download File API
+    @GetMapping("/{id}/report")
+    public ResponseEntity<byte[]> getReport(@PathVariable Long id) {
+
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=" + patient.getFileName())
+                .header(HttpHeaders.CONTENT_TYPE, patient.getFileType())
+                .body(patient.getMedicalReport());
     }
 }

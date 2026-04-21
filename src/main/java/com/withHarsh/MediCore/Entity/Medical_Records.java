@@ -17,18 +17,18 @@ public class Medical_Records {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_Id")
     private Patient patient;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "docter_Id")
     private Docter docter;
 
     @Column(nullable = false)
     private String diagnoses;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL, CascadeType.REMOVE})
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prescription_Id")
     private Prescription prescription;
 
@@ -41,4 +41,11 @@ public class Medical_Records {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @Lob
+    @Column(name = "medical_report", columnDefinition = "LONGBLOB")
+    private byte[] medicalReport;
+
+    private String fileName;
+    private String fileType;
 }

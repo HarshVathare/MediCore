@@ -1,17 +1,11 @@
 package com.withHarsh.MediCore.Services.ImplService;
 
 import com.withHarsh.MediCore.DTO.*;
-import com.withHarsh.MediCore.Entity.Appointment;
-import com.withHarsh.MediCore.Entity.Docter;
-import com.withHarsh.MediCore.Entity.Patient;
-import com.withHarsh.MediCore.Entity.User;
+import com.withHarsh.MediCore.Entity.*;
 import com.withHarsh.MediCore.Entity.type.AppointType;
 import com.withHarsh.MediCore.RabbitMQ.AppointmentEmailEventDTO;
 import com.withHarsh.MediCore.RabbitMQ.MessageProducer;
-import com.withHarsh.MediCore.Repository.AppointmentRepository;
-import com.withHarsh.MediCore.Repository.DocterRepository;
-import com.withHarsh.MediCore.Repository.PatientRepository;
-import com.withHarsh.MediCore.Repository.UserRepository;
+import com.withHarsh.MediCore.Repository.*;
 import com.withHarsh.MediCore.Services.PatientServices;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -33,6 +29,7 @@ public class PatientServiceImpl implements PatientServices {
     private final DocterRepository docterRepository;
     private final AppointmentRepository appointmentRepository;
     private final MessageProducer producer;
+    private final Medical_RecordsRepository medicalRecordsRepository;
 
     @Override
     public ProfileResponceDTO getProfile(Authentication authentication) {
@@ -293,5 +290,36 @@ public class PatientServiceImpl implements PatientServices {
         return "Appointment deleted Successfully ..!";
     }
 
+    @Transactional
+    public String uploadReport(Long patientId, MultipartFile file) throws IOException {
+
+        if (file.isEmpty()) {
+            throw new RuntimeException("File is empty");
+        }
+
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        patient.setFileName(file.getOriginalFilename());
+        patient.setFileType(file.getContentType());
+        patient.setMedicalReport(file.getBytes());
+
+        patientRepository.saveAndFlush(patient);
+
+        return "File uploaded successfully";
+    }
+
+//    @Override
+//    public byte[] getReport(Long patientId) {
+//
+//        Patient patient = patientRepository.findById(patientId)
+//                .orElseThrow(() -> new RuntimeException("Patient not found"));
+//
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION,
+//                        "attachment; filename=" + patient.getFileName())
+//                .header(HttpHeaders.CONTENT_TYPE, patient.getFileType())
+//                .body(patient.getMedicalReport());
+//    }
 
 }

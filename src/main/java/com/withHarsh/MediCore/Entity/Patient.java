@@ -47,4 +47,12 @@ public class Patient {
     @JsonIgnore
     @OneToMany(mappedBy = "patient", cascade = {CascadeType.REMOVE} )
     private List<Medical_Records> medicalRecords = new ArrayList<>();
+
+
+    @Lob
+    @Column(name = "medical_report", columnDefinition = "LONGBLOB")
+    private byte[] medicalReport;
+
+    private String fileName;
+    private String fileType;
 }

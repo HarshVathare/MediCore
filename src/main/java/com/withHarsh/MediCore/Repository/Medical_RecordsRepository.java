@@ -11,4 +11,6 @@ import java.util.List;
 public interface Medical_RecordsRepository extends JpaRepository<Medical_Records, Long> {
 
     List<Medical_Records> findAllByPatient_Id(Long patientId);
+
+    ScopedValue<Medical_Records> findByPatient_Id(Long patientId);
 }

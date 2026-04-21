@@ -5,7 +5,9 @@ import jakarta.validation.Valid;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface PatientServices {
@@ -27,4 +29,8 @@ public interface PatientServices {
     List<PatientResponceDTO> getDocterByExperience(String experienceInYears,int page, int size);
 
     List<PatientResponceDTO> getDocterBySpecialization(String specialization,int page, int size);
+
+    String uploadReport(Long id, MultipartFile file) throws IOException;
+
+//    byte[] getReport(Long id);
 }
