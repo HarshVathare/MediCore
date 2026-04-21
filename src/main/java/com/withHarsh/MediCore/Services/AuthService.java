@@ -5,6 +5,7 @@ import com.withHarsh.MediCore.Entity.Patient;
 import com.withHarsh.MediCore.Entity.RefreshToken;
 
 import com.withHarsh.MediCore.Entity.User;
+
 import com.withHarsh.MediCore.Repository.PatientRepository;
 import com.withHarsh.MediCore.Repository.RefreshTokenRepository;
 import com.withHarsh.MediCore.Repository.UserRepository;
@@ -86,7 +87,11 @@ public class AuthService {
         RefreshToken refreshToken = createRefreshToken(user.getEmail());
 
 
-        return new LoginResponceDTO(accessToken,refreshToken, user.getId(), user.getEmail());
+        return new LoginResponceDTO(
+                accessToken,
+                refreshToken.getToken(),
+                user.getId(),
+                user.getEmail());
     }
 
 
@@ -96,8 +101,7 @@ public class AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // one user → one refresh token
-        refreshTokenRepository.deleteByUser((org.apache.catalina.User) user);
+        refreshTokenRepository.deleteByUser(user); // ✅ FIXED
 
         RefreshToken token = new RefreshToken();
         token.setUser(user);
@@ -131,7 +135,8 @@ public class AuthService {
                 new org.springframework.security.core.userdetails.User(
                         user.getEmail(),
                         user.getPassword(),
-                        List.of() // roles optional
+                        user.getAuthorities()
+//                        List.of() // roles optional
                 )
         );
 
@@ -142,6 +147,15 @@ public class AuthService {
     }
 
 
+    public String logout(RefreshTokenRequestDTO request) {
+
+        RefreshToken token = refreshTokenRepository.findByToken(request.getRefreshToken())
+                .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
+
+        refreshTokenRepository.delete(token);
+
+        return "Logged out successfully";
+    }
 }
 
 

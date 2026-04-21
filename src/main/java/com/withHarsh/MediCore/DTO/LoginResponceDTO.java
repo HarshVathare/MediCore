@@ -15,6 +15,5 @@ public class LoginResponceDTO {
     private Long user_Id;
     private String email;
 
-    public LoginResponceDTO(String accessToken, RefreshToken refreshToken, Long id, String email) {
-    }
+
 }
