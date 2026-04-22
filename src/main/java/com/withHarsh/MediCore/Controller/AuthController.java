@@ -2,9 +2,11 @@ package com.withHarsh.MediCore.Controller;
 
 import com.withHarsh.MediCore.DTO.*;
 import com.withHarsh.MediCore.Services.AuthService;
+import com.withHarsh.MediCore.Services.PatientServices;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -49,5 +51,7 @@ public class AuthController {
     public ResponseEntity<String> logout(@RequestBody RefreshTokenRequestDTO request) {
         return ResponseEntity.ok(authService.logout(request));
     }
+
+
 }
 
