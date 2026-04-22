@@ -79,6 +79,19 @@ public class PatientController {
         return ResponseEntity.ok(patientServices.deleteAppointment(id));
     }
 
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(
+            @RequestBody ChangePasswordRequestDTO requestDTO,
+            Authentication authentication
+    ) {
+        try {
+            String response = patientServices.changePassword(requestDTO, authentication);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     // Upload File API
     @PostMapping("/{id}/report")
     public ResponseEntity<String> uploadReport(

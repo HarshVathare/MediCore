@@ -32,5 +32,6 @@ public interface PatientServices {
 
     String uploadReport(Long id, MultipartFile file) throws IOException;
 
-//    byte[] getReport(Long id);
+    String changePassword(ChangePasswordRequestDTO requestDTO, Authentication authentication);
+
 }

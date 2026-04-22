@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +31,7 @@ public class PatientServiceImpl implements PatientServices {
     private final AppointmentRepository appointmentRepository;
     private final MessageProducer producer;
     private final Medical_RecordsRepository medicalRecordsRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public ProfileResponceDTO getProfile(Authentication authentication) {
@@ -309,17 +311,59 @@ public class PatientServiceImpl implements PatientServices {
         return "File uploaded successfully";
     }
 
-//    @Override
-//    public byte[] getReport(Long patientId) {
-//
-//        Patient patient = patientRepository.findById(patientId)
-//                .orElseThrow(() -> new RuntimeException("Patient not found"));
-//
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION,
-//                        "attachment; filename=" + patient.getFileName())
-//                .header(HttpHeaders.CONTENT_TYPE, patient.getFileType())
-//                .body(patient.getMedicalReport());
-//    }
+    @Override
+    public String changePassword(ChangePasswordRequestDTO requestDTO, Authentication authentication) {
+
+        // ✅ 1. Check authentication
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalArgumentException("User not authenticated");
+        }
+
+        String email = authentication.getName();
+
+        // ✅ 2. Fetch user
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // ✅ 3. Validate input
+        if (requestDTO.getOldPassword() == null || requestDTO.getOldPassword().isBlank()) {
+            throw new IllegalArgumentException("Old password is required");
+        }
+
+        if (requestDTO.getNewPassword() == null || requestDTO.getNewPassword().isBlank()) {
+            throw new IllegalArgumentException("New password is required");
+        }
+
+        // ✅ 4. Handle null password case
+        if (user.getPassword() == null) {
+            throw new IllegalArgumentException("No existing password found. Use forgot password.");
+        }
+
+        // ✅ 5. Verify old password
+        if (!passwordEncoder.matches(requestDTO.getOldPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Old password is incorrect");
+        }
+
+        // ✅ 6. Prevent same password reuse
+        if (passwordEncoder.matches(requestDTO.getNewPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("New password cannot be same as old password");
+        }
+
+        // ✅ 7. Extra security (recommended)
+        if (requestDTO.getNewPassword().length() < 6) {
+            throw new IllegalArgumentException("Password must be at least 6 characters");
+        }
+
+        // ✅ 8. Update password
+        String encodedPassword = passwordEncoder.encode(requestDTO.getNewPassword());
+        user.setPassword(encodedPassword);
+
+        userRepository.save(user);
+
+        // ✅ 9. Debug (remove later)
+        System.out.println("Password updated for user: " + email);
+
+        return "Password changed successfully";
+    }
 
 }
