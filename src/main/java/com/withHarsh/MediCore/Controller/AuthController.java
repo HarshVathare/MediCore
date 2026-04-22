@@ -34,30 +34,20 @@ public class AuthController {
         return ResponseEntity.ok(authService.verify(token));
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgot(@RequestParam String email) {
+        return ResponseEntity.ok(authService.forgotPassword(email));
+    }
+
+    @PostMapping("/reset-password")
+    public String reset(@RequestParam String token,
+                        @RequestParam String password) {
+        return authService.resetPassword(token, password);
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestBody RefreshTokenRequestDTO request) {
         return ResponseEntity.ok(authService.logout(request));
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-//
-//@PostMapping("/forgot-password")
-//public String forgot(@RequestParam String email) {
-//    return service.forgotPassword(email);
-//}
-//
-//@PostMapping("/reset-password")
-//public String reset(@RequestParam String token,
-//                    @RequestParam String password) {
-//    return service.resetPassword(token, password);
-//}

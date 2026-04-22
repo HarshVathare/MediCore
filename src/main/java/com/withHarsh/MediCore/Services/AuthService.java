@@ -150,7 +150,6 @@ public class AuthService {
          return "Account verified";
 }
 
-
     public RefreshTokenResponceDTO getRefreshToken(RefreshTokenRequestDTO request) {
 
         RefreshToken refreshToken = verifyToken(request.getRefreshToken());
@@ -172,6 +171,36 @@ public class AuthService {
         );
     }
 
+    public String forgotPassword(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found..!"));
+
+        user.setResetToken(UUID.randomUUID().toString());
+        userRepository.save(user);
+
+        String link = "http://localhost:8080/api/auth/reset?token=" + user.getResetToken();
+
+        emailService.sendEmailForForgotPassword(
+                user.getEmail(),
+                "Reset Your MediCore Password",
+                link
+        );
+
+        return "Password reset link sent to your email";
+    }
+
+    public String resetPassword(String token, String newPassword) {
+        User user = userRepository.findByResetToken(token).orElseThrow();
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetToken(null);
+
+        userRepository.save(user);
+
+        return "Password updated";
+
+    }
 
     public String logout(RefreshTokenRequestDTO request) {
 
@@ -182,6 +211,8 @@ public class AuthService {
 
         return "Logged out successfully";
     }
+
+
 }
 
 

@@ -150,4 +150,70 @@ public class SmtpEmailService {
             e.printStackTrace();
         }
     }
+
+    public void sendEmailForForgotPassword(String to, String subject, String resetLink) {
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setFrom("medicore.owner@gmail.com");
+            helper.setTo(to);
+            helper.setSubject(subject);
+
+            String htmlContent = """
+        <html>
+        <body style="font-family: Arial, sans-serif; background-color:#f4f6f8; padding:20px;">
+
+            <div style="max-width:600px; margin:auto; background:white; padding:20px; border-radius:10px;">
+
+                <div style="text-align:center;">
+                    <img src='cid:logoImage' width='120'/>
+                    <h2 style="color:#dc3545;">Reset Your Password</h2>
+                </div>
+
+                <p>Dear User,</p>
+
+                <p>We received a request to reset your password for your <b>MediCore</b> 🏥 account.</p>
+
+                <p>Click the button below to reset your password:</p>
+
+                <div style="text-align:center; margin:30px 0;">
+                    <a href="%s" 
+                       style="background-color:#dc3545; color:white; padding:12px 20px; 
+                              text-decoration:none; border-radius:5px; font-weight:bold;">
+                        Reset Password
+                    </a>
+                </div>
+
+                <p>If the button doesn’t work, copy and paste this link:</p>
+                <p style="word-break:break-all;">%s</p>
+
+                <p>This link will expire in <b>15–30 minutes</b> for security reasons.</p>
+
+                <hr>
+
+                <p style="font-size:12px; color:gray;">
+                    If you did not request a password reset, you can safely ignore this email.
+                </p>
+
+                <p>Best Regards,<br><b>MediCore Team 💙</b></p>
+
+            </div>
+
+        </body>
+        </html>
+        """.formatted(resetLink, resetLink);
+
+            helper.setText(htmlContent, true);
+
+            ClassPathResource image = new ClassPathResource("static/Medicore.png");
+            helper.addInline("logoImage", image);
+
+            mailSender.send(message);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
