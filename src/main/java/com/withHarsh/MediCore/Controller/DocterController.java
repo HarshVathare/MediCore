@@ -2,6 +2,7 @@ package com.withHarsh.MediCore.Controller;
 
 import com.withHarsh.MediCore.DTO.*;
 import com.withHarsh.MediCore.Services.DocterServices;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,12 +20,12 @@ public class DocterController {
     private final DocterServices docterServices;
 
     @GetMapping("/profile")
-    public ResponseEntity<DocterProfileResponceDTO> getProfile(Authentication authentication) {
+    public ResponseEntity<DocterProfileResponceDTO> getProfile(@Parameter(hidden = true) Authentication authentication) {
         return ResponseEntity.ok(docterServices.getProfile(authentication));
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<DocterProfileResponceDTO> UpdateProfile(@Valid @RequestBody DocterProfileRequestDTO docterProfileRequestDTO, Authentication authentication) {
+    public ResponseEntity<DocterProfileResponceDTO> UpdateProfile(@Valid @RequestBody DocterProfileRequestDTO docterProfileRequestDTO, @Parameter(hidden = true) Authentication authentication) {
         return ResponseEntity.ok(docterServices.updateProfile(docterProfileRequestDTO, authentication));
     }
 

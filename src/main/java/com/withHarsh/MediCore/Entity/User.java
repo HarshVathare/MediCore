@@ -52,6 +52,7 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Patient patient;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Docter docter;
 

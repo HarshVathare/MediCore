@@ -5,6 +5,7 @@ import com.withHarsh.MediCore.Entity.Patient;
 import com.withHarsh.MediCore.RabbitMQ.MessageProducer;
 import com.withHarsh.MediCore.Repository.PatientRepository;
 import com.withHarsh.MediCore.Services.PatientServices;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -27,12 +28,12 @@ public class PatientController {
     private final PatientRepository patientRepository;
 
     @GetMapping("/profile")
-    public ResponseEntity<ProfileResponceDTO> getProfile(Authentication authentication) {
+    public ResponseEntity<ProfileResponceDTO> getProfile(@Parameter(hidden = true) Authentication authentication) {
         return ResponseEntity.ok(patientServices.getProfile(authentication));
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<ProfileResponceDTO> UpdateProfile(@Valid @RequestBody ProfileRequestDTO profileRequestDTO, Authentication authentication) {
+    public ResponseEntity<ProfileResponceDTO> UpdateProfile(@Valid @RequestBody ProfileRequestDTO profileRequestDTO, @Parameter(hidden = true) Authentication authentication) {
         return ResponseEntity.ok(patientServices.updateProfile(profileRequestDTO, authentication));
     }
 
@@ -61,7 +62,7 @@ public class PatientController {
     }
 
     @PostMapping("/appointments")
-    public ResponseEntity<AppointmentResponceDTO> createAppointment(@RequestBody AppointmentRequestDTO requestDTO , Authentication authentication) {
+    public ResponseEntity<AppointmentResponceDTO> createAppointment(@RequestBody AppointmentRequestDTO requestDTO , @Parameter(hidden = true) Authentication authentication) {
         return ResponseEntity.status(HttpStatus.CREATED).body(patientServices.createAppointment(requestDTO, authentication));
     }
 
@@ -82,7 +83,7 @@ public class PatientController {
     @PutMapping("/change-password")
     public ResponseEntity<?> changePassword(
             @RequestBody ChangePasswordRequestDTO requestDTO,
-            Authentication authentication
+            @Parameter(hidden = true) Authentication authentication
     ) {
         try {
             String response = patientServices.changePassword(requestDTO, authentication);

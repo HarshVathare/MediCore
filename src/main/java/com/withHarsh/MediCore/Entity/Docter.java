@@ -41,9 +41,11 @@ public class Docter {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "docter")
     private List<Appointment> appointment = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "docter")
     private List<Medical_Records> medicalRecords = new ArrayList<>();
 

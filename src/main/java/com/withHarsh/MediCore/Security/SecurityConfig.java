@@ -30,33 +30,43 @@ public class SecurityConfig {
     private final HandlerExceptionResolver handlerExceptionResolver;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session->session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+
+                        // Swagger permit all
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/docters/**").hasAnyRole("DOCTOR","ADMIN")
                         .requestMatchers("/api/patients/**").hasAnyRole("PATIENT","DOCTOR","ADMIN")
-                        .requestMatchers("/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
-
-                        .exceptionHandling(exceptionHandlingConfigurer ->
-                                exceptionHandlingConfigurer.accessDeniedHandler(
-                                        new AccessDeniedHandler() {
-                                            @Override
-                                            public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-                                                handlerExceptionResolver.resolveException(request,response,null,accessDeniedException);
-                                            }
-                                        }
-                                ));
+                .exceptionHandling(ex -> ex
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                handlerExceptionResolver.resolveException(
+                                        request, response, null, accessDeniedException
+                                )
+                        )
+                );
 
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
         http.httpBasic(AbstractHttpConfigurer::disable);
         http.formLogin(AbstractHttpConfigurer::disable);
-       return http.build();
+
+        return http.build();
     }
 
     @Bean
