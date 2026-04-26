@@ -1,5 +1,7 @@
-// js/pages/patient.js
-import { getDoctors, bookAppointment } from "../api/patientApi.js";
+import { getDoctors, bookAppointment } from "../apis/patientApi.js";
+import { check } from "../utills/auth.js";
+
+check();
 
 async function loadDoctors() {
   const res = await getDoctors();
@@ -24,9 +26,5 @@ document.getElementById("bookBtn").addEventListener("click", async () => {
 });
 
 loadDoctors();
-
-import { isLoggedIn } from "../utils/auth.js";
-
-if (!isLoggedIn()) {
   window.location.href = "login.html";
 }

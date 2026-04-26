@@ -1,0 +1,12 @@
+import API from "./axios.js";
+export const login = d => API.post("/api/auth/login", d);
+export const register = d => API.post("/api/auth/register", d);
+export const logout = d => API.post("/api/auth/logout", d);
+export const refreshToken = d => API.post("/api/auth/refresh-token", d);
+export const forgotPassword = d => API.post("/api/auth/forgot-password", d);
+export const resetPassword = d => API.post("/api/auth/reset-password", d);
+export const verify = d => API.get("/api/auth/verify", d);
+export const googleLogin = d => API.post("/api/auth/google", d);
+export const microsoftLogin = d => API.post("/api/auth/microsoft", d);
+export const googleRegister = d => API.post("/api/auth/google/register", d);
+export const microsoftRegister = d => API.post("/api/auth/microsoft/register", d);
