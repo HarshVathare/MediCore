@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Microsoft MSAL -->
+    <script src="https://alcdn.msauth.net/browser/2.28.1/js/msal-browser.min.js"></script>
+</head>
+<body>
+    <div class="container">
+<div class="logo">MediCore</div>
+<h2>Register</h2>
+<form id="regForm">
+<input id="name" placeholder="Name">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<input id="age" placeholder="Age">
+<input id="gender" placeholder="Gender">
+<textarea id="medicalHistory" placeholder="Medical History"></textarea>
+<button>Register</button>
+</form>
+<div class="oauth-section">
+<p>Or register with:</p>
+<button id="googleSignInButton">Sign up with Google</button>
+<button id="microsoftSignInButton">Sign up with Microsoft</button>
+</div>
+<a href="login.html">Already have an account? Login</a>
+</div>
+<script type="module" src="js/pages/register.js"></script>
+</body>
+</html>

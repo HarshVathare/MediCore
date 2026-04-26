@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="css/style.css">
+<!-- Google Sign-In -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<!-- Microsoft MSAL -->
+<script src="https://alcdn.msauth.net/browser/2.28.1/js/msal-browser.min.js"></script>
+</head>
+<body>
+<div class="container">
+<div class="logo">MediCore</div>
+<h2>Login</h2>
+<form id="loginForm">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button>Login</button>
+</form>
+<p id="error"></p>
+<a href="#" id="forgotPassword">Forgot Password?</a>
+<div class="oauth-section">
+<p>Or login with:</p>
+<button id="googleSignInButton">Sign in with Google</button>
+<button id="microsoftSignInButton">Sign in with Microsoft</button>
+</div>
+<a href="register.html">Register</a>
+</div>
+<script type="module" src="js/pages/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCore Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dashboard-page">
+<header class="topbar">
+    <div class="topbar-left">
+        <img src="images/Medicore.png" alt="MediCore logo" class="topbar-logo" />
+        <div>
+            <h1>MediCore</h1>
+            <p>Patient dashboard</p>
+        </div>
+    </div>
+    <button class="small-btn" onclick="logout()">Logout</button>
+</header>
+
+<div class="dashboard-container">
+    <aside class="dashboard-sidebar">
+        <div class="sidebar-title">
+            <span>Dashboard Menu</span>
+            <small>Quick access</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#profile-section">Profile</a>
+            <a href="#doctors-section">Doctors</a>
+            <a href="#book-section">Book</a>
+            <a href="#appointments-section">Appointments</a>
+            <a href="#password-section">Change Password</a>
+        </nav>
+    </aside>
+
+    <main class="dashboard-content">
+        <section class="hero-cards">
+            <article class="hero-card hero-card-primary" onclick="showSection('profile-section')">
+                <span>Profile</span>
+                <h2 id="patientNamePreview">Patient</h2>
+            </article>
+            <article class="hero-card hero-card-secondary" onclick="showSection('appointments-section')">
+                <span>Upcoming</span>
+                <h2 id="appointmentCount">0</h2>
+            </article>
+        </section>
+
+        <div class="content-sections">
+            <section id="profile-section" class="section-card content-section active">
+                <div class="section-title">
+                    <h2>Patient Profile</h2>
+                </div>
+                <div id="profileDetails" class="profile-details"></div>
+                <div id="profileUpdateContainer" class="profile-update-card"></div>
+            </section>
+
+            <section id="doctors-section" class="section-card content-section">
+                <div class="section-title">
+                    <h2>Available Doctors</h2>
+                </div>
+                <div id="doctorList" class="doctor-list"></div>
+            </section>
+
+            <section id="book-section" class="section-card content-section">
+                <div class="section-title">
+                    <h2>Book Appointment</h2>
+                </div>
+                <form id="bookForm" class="form-card">
+                    <label for="doctorSelect">Choose Doctor</label>
+                    <select id="doctorSelect"></select>
+                    <label for="date">Select Date</label>
+                    <input type="date" id="date" />
+                    <button type="submit">Book Appointment</button>
+                </form>
+            </section>
+
+            <section id="appointments-section" class="section-card content-section">
+                <div class="section-title">
+                    <h2>Appointments</h2>
+                </div>
+                <div id="appointments" class="appointments-list"></div>
+            </section>
+
+            <section id="password-section" class="section-card content-section">
+                <div class="section-title">
+                    <h2>Change Password</h2>
+                </div>
+                <form id="passwordForm" class="form-card">
+                    <input id="oldPassword" type="password" placeholder="Current Password" />
+                    <input id="newPassword" type="password" placeholder="New Password" />
+                    <button type="submit">Update Password</button>
+                </form>
+            </section>
+        </div>
+    </main>
+</div>
+
+<script type="module" src="js/pages/dashboard.js"></script>
