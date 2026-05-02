@@ -984,50 +984,65 @@
         event.target.classList.add("active");
       }
 
-      async function loadProfile() {
-        try {
-          const response = await apiCall(`${API_URL}/patients/profile`);
-          const data = await response.json();
+// ✅ Load Profile
+async function loadProfile() {
+  try {
+    const response = await apiCall(`${API_URL}/patients/profile`);
+    const data = await response.json();
 
-          currentUser = data;
+    currentUser = data;
 
-          document.getElementById("profileName").value = data.name || "";
-          document.getElementById("profileEmail").value = data.email || "";
-          document.getElementById("profileAge").value = data.age || "";
-          document.getElementById("profileGender").value =
-            data.gender || "MALE";
+    document.getElementById("profileName").value = data.name || "";
+    document.getElementById("profileEmail").value = data.email || "";
+    document.getElementById("profileAge").value = data.age || "";
+    document.getElementById("profileGender").value = data.gender || "";
 
-          // ✅ After profile, fetch report
-          loadMedicalReport(data.patient_Id);
-        } catch (error) {
-          console.error(error);
-          alert("Failed to load profile");
-        }
-      }
+  } catch (error) {
+    console.error(error);
+    alert("Failed to load profile");
+  }
+}
 
-      async function updateProfile(e) {
-        e.preventDefault();
+// ✅ Update Profile
+async function updateProfile(e) {
+  e.preventDefault();
 
-        const updatedData = {
-          name: profileName.value,
-          email: profileEmail.value,
-          age: profileAge.value,
-          gender: profileGender.value,
-        };
+  const updatedData = {
+    name: document.getElementById("profileName").value,
+    email: document.getElementById("profileEmail").value,
+    age: document.getElementById("profileAge").value,
+    gender: document.getElementById("profileGender").value,
+  };
 
-        const response = await apiCall(`${API_URL}/patients/profile`, {
-          method: "POST",
-          body: JSON.stringify(updatedData),
-        });
+  try {
+    const response = await apiCall(`${API_URL}/patients/profile`, {
+      method: "PUT",
+      body: JSON.stringify(updatedData),
+    });
 
-        console.log("STATUS:", response.status);
+    console.log("STATUS:", response.status);
 
-        if (response.ok) {
-          alert("Updated ✅");
-        } else {
-          console.log(await response.text());
-        }
-      }
+    if (response.ok) {
+      alert("Updated ✅");
+      loadProfile(); // refresh after update
+    } else {
+      const err = await response.text();
+      console.log(err);
+      alert("Update failed ❌");
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert("Error updating profile");
+  }
+}
+
+// ✅ Attach Event
+document.getElementById("profileForm")
+  .addEventListener("submit", updateProfile);
+
+// ✅ Load on page start
+loadProfile();
 
       async function loadMedicalReport(patient_Id) {
         const preview = document.getElementById("medicalRecordPreview");
@@ -1093,8 +1108,10 @@
               (app) => `
         <div class="card mb-3">
             <div class="card-body">
-                <h6>${app.docter?.name || "Doctor"}</h6>
-                <p>${new Date(app.appointment_Date).toLocaleString()}</p>
+              <h5>Appointment ID : ${app.appointment_Id}</h5>
+                <h6>Docter Name : ${app.docter || "Doctor"}</h6>
+                <h6>Specialization : ${app.specialization || "General Checkup"}</h6>
+                <h6>Appointment Date : ${new Date(app.appointment_Date).toLocaleString()}</h6>
                 
               <span class="badge fs-6 px-2 py-1 
                   ${
