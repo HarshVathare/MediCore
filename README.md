@@ -14,6 +14,7 @@ This project is a **Spring Boot-based Hospital Management System** that provides
 * Spring Security (JWT)
 * Hibernate / JPA
 * MySQL
+* Validation
 * Swagger (OpenAPI)
 
 ---
