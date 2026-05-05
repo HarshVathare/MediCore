@@ -63,7 +63,7 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        padding-left: 200PX;
+        padding-left: 200px;
       }
 
       /* ================= HAMBURGER MENU ================= */
@@ -437,9 +437,6 @@
             <span></span>
             <span></span>
           </button>
-          <!-- <span class="navbar-brand">
-            <i class="fas fa-stethoscope"></i> 
-          </span> -->
         </div>
 
         <div class="d-flex align-items-center gap-2">
@@ -648,23 +645,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      //  function startDashboard() {
-      //         // Update UI with real user data
-      //         document.getElementById("userName").textContent = currentUser.name;
-      //         document.getElementById("dashUserName").textContent = currentUser.name;
-      //         document.getElementById("dashUserRole").textContent =
-      //           rol || "PATIENT";
-
-      //         // Show admin nav if admin
-      //         if (currentUser.role === "ROLE_ADMIN") {
-      //           document.getElementById("adminNav").style.display = "block";
-      //         }
-
-      //         // Load all data
-      //         loadAppointments();
-      //         loadDoctors();
-      //       }
-
       // ================= SIDEBAR TOGGLE =================
       const toggleBtn = document.getElementById("toggleBtn");
       const sidebar = document.getElementById("sidebar");
@@ -720,14 +700,6 @@
 
         closeSidebarOnMobile();
       }
-
-      // ================= SAMPLE FUNCTIONS =================
-
-      // // INIT
-      // window.onload = () => {
-      //   loadProfile();
-      //   loadAppointments();
-      // };
 
       const API = "http://localhost:8080/api";
 
@@ -791,7 +763,7 @@
 
       // const API = "http://localhost:8080/api";
 
-      // ✅ Common API helper
+      //  Common API helper
       async function apiCall(url, method = "GET", data = null) {
         return fetch(url, {
           method: method,
@@ -811,7 +783,7 @@
 
           console.log("PROFILE DATA:", data);
 
-          // ✅ Fill UI
+          // Fill UI
           document.getElementById("id").value = data.docter_id || data.id || "";
           document.getElementById("name").value = data.name || "";
           document.getElementById("email").value = data.email || "";
@@ -821,7 +793,7 @@
           document.getElementById("experianceInYears").value =
             data.experienceInYears || data.experianceInYears || "";
 
-          // ✅ Sidebar/UI update
+          // Sidebar/UI update
           document.getElementById("doctorName").innerText = data.name || "";
           document.getElementById("sideName").innerText = data.name || "";
           document.getElementById("sideSpec").innerText =
@@ -839,12 +811,12 @@
           e.preventDefault();
 
           const updatedData = {
-            // ❌ Do NOT send doctorId unless backend needs it
+            // Do NOT send doctorId unless backend needs it
             name: document.getElementById("name").value,
             email: document.getElementById("email").value,
             specialization: document.getElementById("specialization").value,
 
-            // ✅ correct key (IMPORTANT)
+            // correct key (IMPORTANT)
             experienceInYears:
               document.getElementById("experianceInYears").value,
           };
@@ -859,7 +831,7 @@
             if (res.ok) {
               alert("✅ Profile Updated");
 
-              // ✅ Reload fresh data from backend
+              // Reload fresh data from backend
               loadProfile();
             } else {
               const err = await res.text(); // safer than json
@@ -872,56 +844,57 @@
           }
         });
 
-      // ✅ Load on page start
+      // Load on page start
       loadProfile();
 
       // ================= APPOINTMENTS =================
 
-async function apiCall(url, options = {}) {
-  const token = localStorage.getItem("accessToken");
+      async function apiCall(url, options = {}) {
+        const token = localStorage.getItem("accessToken");
 
-  return fetch(url, {
-    method: options.method || "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : "",
-      ...(options.headers || {}),
-    },
-    body: options.body || null, // ✅ IMPORTANT
-  });
-}
+        return fetch(url, {
+          method: options.method || "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+            ...(options.headers || {}),
+          },
+          body: options.body || null, // IMPORTANT
+        });
+      }
 
-// ================= APPOINTMENTS =================
-async function loadAppointments() {
-  try {
-    const res = await apiCall(`${API}/docters/appointments`);
+      // ================= APPOINTMENTS =================
+      async function loadAppointments() {
+        try {
+          const res = await apiCall(`${API}/docters/appointments`);
 
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`);
-    }
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+          }
 
-    let data = [];
-    try {
-      data = await res.json();
-    } catch {
-      throw new Error("Invalid JSON response");
-    }
+          let data = [];
+          try {
+            data = await res.json();
+          } catch {
+            throw new Error("Invalid JSON response");
+          }
 
-    if (!Array.isArray(data)) {
-      throw new Error("Invalid data format");
-    }
+          if (!Array.isArray(data)) {
+            throw new Error("Invalid data format");
+          }
 
-    const html = data.map((a) => {
-      const statusColor =
-        a.status === "CONFIRMED"
-          ? "success"
-          : a.status === "COMPLETED"
-          ? "primary"
-          : a.status === "CANCELLED"
-          ? "danger"
-          : "warning";
+          const html = data
+            .map((a) => {
+              const statusColor =
+                a.status === "CONFIRMED"
+                  ? "success"
+                  : a.status === "COMPLETED"
+                    ? "primary"
+                    : a.status === "CANCELLED"
+                      ? "danger"
+                      : "warning";
 
-      return `
+              return `
         <div class="card mb-2">
           <div class="card-body">
             <h6>Appointment ID: ${a.appointment_Id || "N/A"}</h6>
@@ -969,81 +942,65 @@ async function loadAppointments() {
           </div>
         </div>
       `;
-    }).join("");
+            })
+            .join("");
 
-    document.getElementById("appointmentsList").innerHTML =
-      html || "<p>No appointments found</p>";
-
-  } catch (error) {
-    console.error("❌ Load Error:", error);
-    document.getElementById("appointmentsList").innerHTML =
-      "<p class='text-danger'>Failed to load appointments</p>";
-  }
-}
-
-// ================= UPDATE STATUS =================
-async function updateStatusFromSelect(appointment_Id) {
-  const select = document.getElementById(`status-${appointment_Id}`);
-
-  if (!select) {
-    alert("❌ Status dropdown not found");
-    return;
-  }
-
-  const status = select.value;
-  await updateStatus(appointment_Id, status);
-}
-
-async function updateStatus(appointment_Id, status) {
-  try {
-    if (!appointment_Id || !status) {
-      alert("❌ Invalid input");
-      return;
-    }
-
-    const res = await apiCall(
-      `${API}/docters/appointments/${appointment_Id}/status`,
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          appointment_status: status,
-          availability: true,
-        }),
+          document.getElementById("appointmentsList").innerHTML =
+            html || "<p>No appointments found</p>";
+        } catch (error) {
+          console.error("❌ Load Error:", error);
+          document.getElementById("appointmentsList").innerHTML =
+            "<p class='text-danger'>Failed to load appointments</p>";
+        }
       }
-    );
 
-    let data = null;
-    try {
-      data = await res.json();
-    } catch {}
+      // ================= UPDATE STATUS =================
+      async function updateStatusFromSelect(appointment_Id) {
+        const select = document.getElementById(`status-${appointment_Id}`);
 
-    if (res.ok) {
-      alert("✅ Status updated successfully");
-      loadAppointments();
-    } else {
-      alert("❌ Failed: " + (data?.message || `HTTP ${res.status}`));
-    }
+        if (!select) {
+          alert("❌ Status dropdown not found");
+          return;
+        }
 
-  } catch (error) {
-    console.error("❌ Update Error:", error);
-    alert("❌ Error: " + error.message);
-  }
-}
+        const status = select.value;
+        await updateStatus(appointment_Id, status);
+      }
 
+      async function updateStatus(appointment_Id, status) {
+        try {
+          if (!appointment_Id || !status) {
+            alert("❌ Invalid input");
+            return;
+          }
 
+          const res = await apiCall(
+            `${API}/docters/appointments/${appointment_Id}/status`,
+            {
+              method: "PUT",
+              body: JSON.stringify({
+                appointment_status: status,
+                availability: true,
+              }),
+            },
+          );
 
+          let data = null;
+          try {
+            data = await res.json();
+          } catch {}
 
-
-
-
-
-
-
-
-
-
-
-
+          if (res.ok) {
+            alert("✅ Status updated successfully");
+            loadAppointments();
+          } else {
+            alert("❌ Failed: " + (data?.message || `HTTP ${res.status}`));
+          }
+        } catch (error) {
+          console.error("❌ Update Error:", error);
+          alert("❌ Error: " + error.message);
+        }
+      }
 
       // ================= MEDICAL RECORD =================
       async function getRecords() {
@@ -1093,104 +1050,51 @@ async function updateStatus(appointment_Id, status) {
         }
       }
 
-      // async function addRecord() {
-      //   try {
-      //     const appointmentId = document.getElementById("appointmentId").value;
+      async function addRecord() {
+        try {
+          const appointmentId = document.getElementById("appointmentId").value;
 
-      //     // ✅ CORRECTED: Matches MedicalRecordRequestDTO structure
-      //     const payload = {
-      //       diagnosis: document.getElementById("diagnosis").value,
-      //       prescription: document.getElementById("prescription").value, // Simple string
-      //       notes: document.getElementById("notes").value,
-      //     };
+          if (!appointmentId) {
+            alert("❌ Please enter Appointment ID");
+            return;
+          }
 
-      //     console.log("POST Payload:", payload);
+          const payload = {
+            diagnosis: document.getElementById("diagnosis").value,
+            prescription: document.getElementById("prescription").value, // IMPORTANT
+            notes: document.getElementById("notes").value,
+          };
 
-      //     const res = await apiCall(
-      //       API + `/docters/${appointmentId}/medical-record`,
-      //       {
-      //         method: "POST",
-      //         headers: {
-      //           "Content-Type": "application/json",
-      //         },
-      //         body: JSON.stringify(payload),
-      //       },
-      //     );
+          console.log("POST Payload:", payload);
 
-      //     const data = await res.json().catch(() => null);
+          const res = await apiCall(
+            `${API}/docters/${appointmentId}/medical-record`, // keep same if backend uses docters
+            {
+              method: "POST",
+              body: JSON.stringify(payload),
+            },
+          );
 
-      //     if (res.ok) {
-      //       alert("✅ Medical record added successfully!");
+          let data = null;
+          try {
+            data = await res.json();
+          } catch {}
 
-      //       // Clear form fields
-      //       document.getElementById("diagnosis").value = "";
-      //       document.getElementById("prescription").value = "";
-      //       document.getElementById("notes").value = "";
-      //     } else {
-      //       alert("❌ Failed: " + (data?.message || "Error adding record"));
-      //     }
-      //   } catch (error) {
-      //     console.error(error);
-      //     alert("❌ Error adding medical record");
-      //   }
-      // }
+          if (res.ok) {
+            alert("✅ Medical record added successfully!");
 
-    async function addRecord() {
-  try {
-    const appointmentId = document.getElementById("appointmentId").value;
-
-    if (!appointmentId) {
-      alert("❌ Please enter Appointment ID");
-      return;
-    }
-
-    const payload = {
-      diagnosis: document.getElementById("diagnosis").value,
-      prescription: document.getElementById("prescription").value, // ✅ IMPORTANT
-      notes: document.getElementById("notes").value,
-    };
-
-    console.log("POST Payload:", payload);
-
-    const res = await apiCall(
-      `${API}/docters/${appointmentId}/medical-record`, // keep same if backend uses docters
-      {
-        method: "POST",
-        body: JSON.stringify(payload),
+            document.getElementById("diagnosis").value = "";
+            document.getElementById("prescription").value = "";
+            document.getElementById("notes").value = "";
+          } else {
+            console.error("Backend Error:", data);
+            alert("❌ Failed: " + (data?.message || `HTTP ${res.status}`));
+          }
+        } catch (error) {
+          console.error("❌ Error:", error);
+          alert("❌ Error adding medical record");
+        }
       }
-    );
-
-    let data = null;
-    try {
-      data = await res.json();
-    } catch {}
-
-    if (res.ok) {
-      alert("✅ Medical record added successfully!");
-
-      document.getElementById("diagnosis").value = "";
-      document.getElementById("prescription").value = "";
-      document.getElementById("notes").value = "";
-    } else {
-      console.error("Backend Error:", data);
-      alert("❌ Failed: " + (data?.message || `HTTP ${res.status}`));
-    }
-
-  } catch (error) {
-    console.error("❌ Error:", error);
-    alert("❌ Error adding medical record");
-  }
-}
-
-
-
-
-
-
-
-
-
-
 
       // Initialize
       document.addEventListener("DOMContentLoaded", function () {

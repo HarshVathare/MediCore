@@ -930,7 +930,7 @@
         });
       }
 
-      // ✅ FIXED LOGIN CHECK - Uses PROFILE endpoint
+      // FIXED LOGIN CHECK - Uses PROFILE endpoint
       async function checkLogin() {
         const token = getToken();
         if (!token) {
@@ -984,65 +984,64 @@
         event.target.classList.add("active");
       }
 
-// ✅ Load Profile
-async function loadProfile() {
-  try {
-    const response = await apiCall(`${API_URL}/patients/profile`);
-    const data = await response.json();
+      // Load Profile
+      async function loadProfile() {
+        try {
+          const response = await apiCall(`${API_URL}/patients/profile`);
+          const data = await response.json();
 
-    currentUser = data;
+          currentUser = data;
 
-    document.getElementById("profileName").value = data.name || "";
-    document.getElementById("profileEmail").value = data.email || "";
-    document.getElementById("profileAge").value = data.age || "";
-    document.getElementById("profileGender").value = data.gender || "";
+          document.getElementById("profileName").value = data.name || "";
+          document.getElementById("profileEmail").value = data.email || "";
+          document.getElementById("profileAge").value = data.age || "";
+          document.getElementById("profileGender").value = data.gender || "";
+        } catch (error) {
+          console.error(error);
+          alert("Failed to load profile");
+        }
+      }
 
-  } catch (error) {
-    console.error(error);
-    alert("Failed to load profile");
-  }
-}
+      // Update Profile
+      async function updateProfile(e) {
+        e.preventDefault();
 
-// ✅ Update Profile
-async function updateProfile(e) {
-  e.preventDefault();
+        const updatedData = {
+          name: document.getElementById("profileName").value,
+          email: document.getElementById("profileEmail").value,
+          age: document.getElementById("profileAge").value,
+          gender: document.getElementById("profileGender").value,
+        };
 
-  const updatedData = {
-    name: document.getElementById("profileName").value,
-    email: document.getElementById("profileEmail").value,
-    age: document.getElementById("profileAge").value,
-    gender: document.getElementById("profileGender").value,
-  };
+        try {
+          const response = await apiCall(`${API_URL}/patients/profile`, {
+            method: "PUT",
+            body: JSON.stringify(updatedData),
+          });
 
-  try {
-    const response = await apiCall(`${API_URL}/patients/profile`, {
-      method: "PUT",
-      body: JSON.stringify(updatedData),
-    });
+          console.log("STATUS:", response.status);
 
-    console.log("STATUS:", response.status);
+          if (response.ok) {
+            alert("Updated ✅");
+            loadProfile(); // refresh after update
+          } else {
+            const err = await response.text();
+            console.log(err);
+            alert("Update failed ❌");
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Error updating profile");
+        }
+      }
 
-    if (response.ok) {
-      alert("Updated ✅");
-      loadProfile(); // refresh after update
-    } else {
-      const err = await response.text();
-      console.log(err);
-      alert("Update failed ❌");
-    }
+      // Attach Event
+      document
+        .getElementById("profileForm")
+        .addEventListener("submit", updateProfile);
 
-  } catch (error) {
-    console.error(error);
-    alert("Error updating profile");
-  }
-}
-
-// ✅ Attach Event
-document.getElementById("profileForm")
-  .addEventListener("submit", updateProfile);
-
-// ✅ Load on page start
-loadProfile();
+      // Load on page start
+      loadProfile();
 
       async function loadMedicalReport(patient_Id) {
         const preview = document.getElementById("medicalRecordPreview");
@@ -1055,7 +1054,7 @@ loadProfile();
             },
           });
 
-          // ✅ If no file
+          // If no file
           if (!res.ok) {
             preview.innerHTML = `<p class="text-muted">No medical record uploaded</p>`;
             return;
@@ -1064,7 +1063,7 @@ loadProfile();
           const blob = await res.blob();
           const fileURL = URL.createObjectURL(blob);
 
-          // ✅ FIX: handle null content-type
+          // FIX: handle null content-type
           const contentType = res.headers.get("content-type") || "";
 
           if (contentType.includes("image")) {
@@ -1163,7 +1162,7 @@ loadProfile();
 
           alert("Appointment cancelled");
 
-          // ✅ reload appointments
+          // reload appointments
           loadAppointments();
         } catch (error) {
           console.log(error);
