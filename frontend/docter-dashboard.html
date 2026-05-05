@@ -876,127 +876,160 @@
       loadProfile();
 
       // ================= APPOINTMENTS =================
-      async function loadAppointments() {
-        try {
-          const res = await apiCall(API + "/docters/appointments");
-          const data = await res.json();
 
-          const html = data
-            .map(
-              (a) => `
-            <div class="card mb-2">
-                <div class="card-body">
-                    <h6>Appointment ID: ${a.appointment_Id}</h6>
-                    <h6>Patient ID: ${a.patient_Id}</h6>
-                    <h6>Patient Name: ${a.name}</h6>
-                    <h6>Email: ${a.email_Id}</h6>
+async function apiCall(url, options = {}) {
+  const token = localStorage.getItem("accessToken");
 
-                    <h6>Appointment Time: 
-                        ${new Date(a.appointment_Time).toLocaleString()}
-                    </h6>
+  return fetch(url, {
+    method: options.method || "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : "",
+      ...(options.headers || {}),
+    },
+    body: options.body || null, // ✅ IMPORTANT
+  });
+}
 
-                    <h6>Medical History: ${a.medical_History}</h6>
+// ================= APPOINTMENTS =================
+async function loadAppointments() {
+  try {
+    const res = await apiCall(`${API}/docters/appointments`);
 
-                    <!-- CURRENT STATUS -->
-                    <span class="badge bg-${
-                      a.status === "CONFIRMED"
-                        ? "success"
-                        : a.status === "COMPLETED"
-                          ? "primary"
-                          : a.status === "CANCELLED"
-                            ? "danger"
-                            : "warning"
-                    }">
-                        ${a.status}
-                    </span>
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
 
-                    <br><br>
+    let data = [];
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error("Invalid JSON response");
+    }
 
-                    <!-- STATUS SELECT -->
-                    <select id="status-${a.appointment_Id}" class="form-select form-select-sm w-50">
-                        <option value="CONFIRMED" ${a.status === "CONFIRMED" ? "selected" : ""}>CONFIRMED</option>
-                        <option value="COMPLETED" ${a.status === "COMPLETED" ? "selected" : ""}>COMPLETED</option>
-                        <option value="CANCELLED" ${a.status === "CANCELLED" ? "selected" : ""}>CANCELLED</option>
-                    </select>
+    if (!Array.isArray(data)) {
+      throw new Error("Invalid data format");
+    }
 
-                    <br>
+    const html = data.map((a) => {
+      const statusColor =
+        a.status === "CONFIRMED"
+          ? "success"
+          : a.status === "COMPLETED"
+          ? "primary"
+          : a.status === "CANCELLED"
+          ? "danger"
+          : "warning";
 
-                    <!-- UPDATE BUTTON -->
-                    <button class="btn btn-primary btn-sm mt-2"
-                        onclick="updateStatusFromSelect(${a.appointment_Id})">
-                        Update Status
-                    </button>
-                </div>
-            </div>
-        `,
-            )
-            .join("");
+      return `
+        <div class="card mb-2">
+          <div class="card-body">
+            <h6>Appointment ID: ${a.appointment_Id || "N/A"}</h6>
+            <h6>Patient ID: ${a.patient_Id || "N/A"}</h6>
+            <h6>Patient Name: ${a.name || "N/A"}</h6>
+            <h6>Email: ${a.email_Id || "N/A"}</h6>
 
-          document.getElementById("appointmentsList").innerHTML = html;
-        } catch (error) {
-          console.error("Load Error:", error);
-          alert("❌ Failed to load appointments");
-        }
+            <h6>Appointment Time: 
+              ${
+                a.appointment_Time
+                  ? new Date(a.appointment_Time).toLocaleString()
+                  : "N/A"
+              }
+            </h6>
+
+            <h6>Medical History: ${a.medical_History || "N/A"}</h6>
+
+            <!-- STATUS -->
+            <span class="badge bg-${statusColor}">
+              ${a.status || "UNKNOWN"}
+            </span>
+
+            <br><br>
+
+            <!-- STATUS SELECT -->
+            <select id="status-${a.appointment_Id}" class="form-select form-select-sm w-50">
+              <option value="CONFIRMED" ${
+                a.status === "CONFIRMED" ? "selected" : ""
+              }>CONFIRMED</option>
+              <option value="COMPLETED" ${
+                a.status === "COMPLETED" ? "selected" : ""
+              }>COMPLETED</option>
+              <option value="CANCELLED" ${
+                a.status === "CANCELLED" ? "selected" : ""
+              }>CANCELLED</option>
+            </select>
+
+            <br>
+
+            <!-- BUTTON -->
+            <button class="btn btn-primary btn-sm mt-2"
+              onclick="updateStatusFromSelect(${a.appointment_Id})">
+              Update Status
+            </button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    document.getElementById("appointmentsList").innerHTML =
+      html || "<p>No appointments found</p>";
+
+  } catch (error) {
+    console.error("❌ Load Error:", error);
+    document.getElementById("appointmentsList").innerHTML =
+      "<p class='text-danger'>Failed to load appointments</p>";
+  }
+}
+
+// ================= UPDATE STATUS =================
+async function updateStatusFromSelect(appointment_Id) {
+  const select = document.getElementById(`status-${appointment_Id}`);
+
+  if (!select) {
+    alert("❌ Status dropdown not found");
+    return;
+  }
+
+  const status = select.value;
+  await updateStatus(appointment_Id, status);
+}
+
+async function updateStatus(appointment_Id, status) {
+  try {
+    if (!appointment_Id || !status) {
+      alert("❌ Invalid input");
+      return;
+    }
+
+    const res = await apiCall(
+      `${API}/docters/appointments/${appointment_Id}/status`,
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          appointment_status: status,
+          availability: true,
+        }),
       }
+    );
 
-      async function updateStatusFromSelect(appointment_Id) {
-        const status = document.getElementById(
-          `status-${appointment_Id}`,
-        ).value;
-        updateStatus(appointment_Id, status);
-      }
+    let data = null;
+    try {
+      data = await res.json();
+    } catch {}
 
-      async function updateStatus(appointment_Id, status) {
-        try {
-          // ✅ Validate inputs
-          if (!appointment_Id || !status) {
-            alert("❌ Invalid appointment ID or status");
-            return;
-          }
+    if (res.ok) {
+      alert("✅ Status updated successfully");
+      loadAppointments();
+    } else {
+      alert("❌ Failed: " + (data?.message || `HTTP ${res.status}`));
+    }
 
-          const url = API + `/docters/appointments/${appointment_Id}/status`;
+  } catch (error) {
+    console.error("❌ Update Error:", error);
+    alert("❌ Error: " + error.message);
+  }
+}
 
-          const payload = {
-            appointment_status: status,
-            availability: true,
-          };
-
-          console.log("👉 URL:", url);
-          console.log("👉 Payload:", payload);
-
-          const res = await apiCall(url, {
-            method: "PUT",
-            body: JSON.stringify(payload),
-          });
-
-          // ✅ Handle empty response safely
-          let data = null;
-          try {
-            data = await res.json();
-          } catch {
-            console.warn("No JSON response");
-          }
-
-          console.log("👉 Status Code:", res.status);
-          console.log("👉 Response Data:", data);
-
-          if (res.ok) {
-            // 🔥 Extra verification (important)
-            if (data && data.status && data.status !== status) {
-              alert("⚠️ Status not updated correctly in backend!");
-              return;
-            }
-
-            alert("✅ Appointment status updated successfully!");
-            loadAppointments();
-          } else {
-            alert("❌ Failed: " + (data?.message || `HTTP ${res.status}`));
-          }
-        } catch (error) {
-          console.error("❌ Update Error:", error);
-          alert("❌ Error updating appointment: " + error.message);
-        }
-      }
 
       // ================= MEDICAL RECORD =================
       async function getRecords() {
@@ -1088,35 +1121,17 @@
         }
       }
 
-      // function getRecords() {
-      //   const patientId = document.getElementById('patientId').value;
-      //   if (!patientId) {
-      //     alert('Please enter Patient ID');
-      //     return;
-      //   }
-      //   document.getElementById('recordsList').innerHTML = `
-      //     <div class="text-center py-4">
-      //       <i class="fas fa-spinner fa-spin fa-2x text-primary mb-3"></i>
-      //       <p>Loading records for Patient ID: ${patientId}...</p>
-      //     </div>
-      //   `;
-      //   // API call here
+     
 
-      // }
 
-      // function addRecord() {
-      //   const appointmentId = document.getElementById('appointmentId').value;
-      //   if (!appointmentId) {
-      //     alert('Please enter Appointment ID');
-      //     return;
-      //   }
-      //   alert('Medical record added successfully!');
-      //   // Reset form
-      //   document.getElementById('appointmentId').value = '';
-      //   document.getElementById('diagnosis').value = '';
-      //   document.getElementById('prescription').value = '';
-      //   document.getElementById('notes').value = '';
-      // }
+
+
+
+
+
+
+
+
 
       // Initialize
       document.addEventListener("DOMContentLoaded", function () {
