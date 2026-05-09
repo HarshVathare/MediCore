@@ -34,4 +34,5 @@ public interface PatientServices {
 
     String changePassword(ChangePasswordRequestDTO requestDTO, Authentication authentication);
 
+    List<MedicalRecordResponceDTO> getMedicalRecordByPatientId(Long patientId);
 }

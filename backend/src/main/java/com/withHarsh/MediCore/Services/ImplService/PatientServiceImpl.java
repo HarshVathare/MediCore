@@ -371,4 +371,28 @@ public class PatientServiceImpl implements PatientServices {
         return "Password changed successfully";
     }
 
+
+    @Override
+    public List<MedicalRecordResponceDTO> getMedicalRecordByPatientId(Long patientId) {
+
+        Patient patient = patientRepository.findById(patientId).orElseThrow(()->
+                new IllegalArgumentException("Patient Not found"));
+
+        List<Medical_Records> medicalRecords = medicalRecordsRepository.findAllByPatient_Id(patientId);
+
+        List<MedicalRecordResponceDTO> medicalRecordResponceDTOList = medicalRecords.stream()
+                .map(records-> new MedicalRecordResponceDTO(
+                        records.getId(),
+                        records.getPatient().getId(),
+                        records.getDocter().getUser().getName(),
+                        records.getPatient().getUser().getName(),
+                        records.getDiagnoses(),
+                        records.getPrescription().getMedicine(),
+                        records.getPrescription().getNotes(),
+                        records.getCreatedAt()
+                )).toList();
+
+        return medicalRecordResponceDTOList;
+    }
+
 }
