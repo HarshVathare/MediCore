@@ -66,7 +66,7 @@ public class SmtpEmailService {
 
             helper.setText(htmlContent, true);
 
-            ClassPathResource image = new ClassPathResource("static/Medicore.png");
+            ClassPathResource image = new ClassPathResource("static/medicoreLogo.png");
             helper.addInline("logoImage", image);
 
             mailSender.send(message);
@@ -141,7 +141,7 @@ public class SmtpEmailService {
 
             helper.setText(htmlContent, true);
 
-            ClassPathResource image = new ClassPathResource("static/Medicore.png");
+            ClassPathResource image = new ClassPathResource("static/medicoreLogo.png");
             helper.addInline("logoImage", image);
 
             mailSender.send(message);
@@ -207,7 +207,7 @@ public class SmtpEmailService {
 
             helper.setText(htmlContent, true);
 
-            ClassPathResource image = new ClassPathResource("static/Medicore.png");
+            ClassPathResource image = new ClassPathResource("static/medicoreLogo.png");
             helper.addInline("logoImage", image);
 
             mailSender.send(message);
