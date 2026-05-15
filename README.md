@@ -4,8 +4,10 @@ A full-stack Hospital Management System designed to handle real-world healthcare
 
 ## Live Demo
 
-Frontend: [https://medicore-hms-six.vercel.app](https://medicore-hms-six.vercel.app)..
-Backend: [https://medicore-p9x7.onrender.com](https://medicore-p9x7.onrender.com)..
+Frontend: [https://medicore-hms-six.vercel.app](https://medicore-hms-six.vercel.app)
+
+Backend: [https://medicore-p9x7.onrender.com](https://medicore-p9x7.onrender.com)
+
 Swagger Docs: [https://medicore-p9x7.onrender.com/swagger-ui/index.html](https://medicore-p9x7.onrender.com/swagger-ui/index.html)
 
 ---
