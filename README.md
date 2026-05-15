@@ -1,228 +1,194 @@
+ # MediCore
 
-# 🏥 MediCore – Scalable Hospital Management System
+A full-stack Hospital Management System designed to handle real-world healthcare workflows such as appointment booking, doctor management, patient records, authentication, and role-based access control.
 
-![Java](https://img.shields.io/badge/Java-Backend-blue)
-![Spring Boot](https://img.shields.io/badge/SpringBoot-REST%20API-green)
-![JWT](https://img.shields.io/badge/JWT-Security-orange)
-![MySQL](https://img.shields.io/badge/MySQL-Database-blue)
-![Render](https://img.shields.io/badge/Backend-Live-success)
-![Vercel](https://img.shields.io/badge/Frontend-Live-black)
+## Live Demo
 
-## 🚀 Live Project Links
-
-### 🌐 Frontend Application
-👉 https://medicore-hms-six.vercel.app
-
-### 📘 Swagger API Documentation
-👉 https://medicore-p9x7.onrender.com/swagger-ui/index.html
-
-### ⚙️ Backend Base URL
-👉 https://medicore-p9x7.onrender.com
+Frontend: [https://medicore-hms-six.vercel.app](https://medicore-hms-six.vercel.app)
+Backend: [https://medicore-p9x7.onrender.com](https://medicore-p9x7.onrender.com)
+Swagger Docs: [https://medicore-p9x7.onrender.com/swagger-ui/index.html](https://medicore-p9x7.onrender.com/swagger-ui/index.html)
 
 ---
 
-# 📌 Overview
+## About The Project
 
-**MediCore** is a scalable and production-ready **Hospital Management System** built using **Java Spring Boot**.  
-The system provides secure management for:
+MediCore started as a backend-focused project to solve common hospital management problems using scalable REST APIs and secure authentication.
 
-- Patients
-- Doctors
-- Admins
-- Appointments
-- Medical Records
-- Authentication & Authorization
+The system supports three major roles:
 
-This project follows clean backend architecture and real-world REST API development practices.
+* Patient
+* Doctor
+* Admin
 
----
+Each role has dedicated APIs and access control using JWT authentication and Spring Security.
 
-# ✨ Features
+The goal of this project was not only to build APIs, but also to simulate how a real hospital platform handles:
 
-## 🔐 Authentication & Authorization
-- JWT Authentication
-- Role-Based Access Control
-- Secure Login & Registration
-- Refresh Token System
-- Forgot Password & Reset Password
-- Email Verification System
+* Appointment scheduling
+* Medical records
+* Doctor workflows
+* Authentication and authorization
+* Email-based password recovery
+* Dashboard and user management
+
+The project is fully deployed and integrated with a frontend application.
 
 ---
 
-## 👨‍⚕️ Doctor Module
-- Doctor Profile Management
-- Manage Patient Appointments
-- Update Appointment Status
-- Create Medical Records
-- Search Doctors
+## Features
+
+### Authentication & Security
+
+* JWT-based authentication
+* Role-based authorization
+* Access & refresh token flow
+* Forgot password functionality
+* Reset password via email
+* Secure password encryption using Spring Security
+
+### Patient Module
+
+* Register and login
+* Book appointments
+* Cancel appointments
+* View appointment history
+* Access medical records
+* Update profile and password
+
+### Doctor Module
+
+* Manage doctor profile
+* View assigned appointments
+* Update appointment status
+* Create medical records for patients
+* Search doctors
+
+### Admin Module
+
+* Add and manage doctors
+* Manage users
+* View system dashboard
+* Remove doctors and users
+
+### Additional Features
+
+* RabbitMQ-based email workflow
+* Swagger/OpenAPI integration
+* Layered backend architecture
+* DTO-based API design
+* Global exception handling
 
 ---
 
-## 🧑 Patient Module
-- Patient Profile Management
-- Book & Cancel Appointments
-- View Medical Records
-- Change Password
-- Access Reports
+## Tech Stack
+
+### Backend
+
+* Java
+* Spring Boot
+* Spring Security
+* Spring Data JPA
+* Hibernate
+* JWT Authentication
+* RabbitMQ
+* MySQL
+
+### Deployment & Tools
+
+* Render (Backend Hosting)
+* Vercel (Frontend Hosting)
+* Swagger / OpenAPI
+* Maven
+* Git & GitHub
 
 ---
 
-## 🧑‍💼 Admin Module
-- Add & Remove Doctors
-- Manage Users
-- Dashboard Analytics
-- Monitor System Data
+## Architecture
+
+The backend follows a layered architecture:
+
+Controller → Service → Repository → Database
+
+Additional integrations:
+
+* JWT Security Layer
+* RabbitMQ Queue Processing
+* SMTP Email Service
 
 ---
 
-## 📅 Appointment System
-- Real-Time Appointment Booking
-- Appointment Tracking
-- Doctor Approval Workflow
+## API Modules
+
+### Auth APIs
+
+* Login
+* Register
+* Refresh Token
+* Forgot Password
+* Reset Password
+* Logout
+* Email Verification
+
+### Patient APIs
+
+* Manage profile
+* Book appointments
+* Cancel appointments
+* View reports
+* Access medical records
+
+### Doctor APIs
+
+* Manage appointments
+* Update appointment status
+* Create medical records
+* Search patients/doctors
+
+### Admin APIs
+
+* Add doctors
+* Remove doctors
+* Manage users
+* Dashboard analytics
 
 ---
 
-## 📄 Medical Records System
-- Secure Record Management
-- Patient Health Reports
-- Doctor Generated Medical Data
+## What I Learned From This Project
+
+While building MediCore, I improved my understanding of:
+
+* Secure backend development using Spring Security
+* JWT authentication workflows
+* REST API design principles
+* Queue-based asynchronous processing with RabbitMQ
+* Database relationship handling with JPA/Hibernate
+* Production deployment challenges
+* SMTP integration and cloud deployment debugging
+
+This project also helped me understand how production systems handle scalability, modularity, and secure API communication.
 
 ---
 
-# 🏗️ Tech Stack
+## Future Improvements
 
-| Technology | Usage |
-|---|---|
-| Java | Backend Development |
-| Spring Boot | REST API Framework |
-| Spring Security | Authentication & Authorization |
-| JWT | Secure Authentication |
-| Hibernate / JPA | ORM |
-| MySQL | Database |
-| RabbitMQ | Messaging Queue |
-| Brevo SMTP | Email Service |
-| Swagger/OpenAPI | API Documentation |
-| Render | Backend Deployment |
-| Vercel | Frontend Deployment |
+* Docker containerization
+* Kubernetes deployment
+* Real-time notifications using WebSockets
+* Payment integration
+* Video consultation support
+* AI-based health recommendations
 
 ---
 
-# 📂 Project Architecture
+## Developer
 
-```text
-Controller Layer
-       ↓
-Service Layer
-       ↓
-Repository Layer
-       ↓
-MySQL Database
-```
-
-### Additional Integrations
-
-```text
-JWT Security
-RabbitMQ Queue
-Brevo Email Service
-Swagger API Docs
-```
-
----
-
-# 📘 API Modules
-
-## 🔐 Auth APIs
-- Login
-- Register
-- Forgot Password
-- Reset Password
-- Logout
-- Refresh Token
-- Verify User
-
----
-
-## 🧑 Patient APIs
-- Manage Profile
-- Book Appointment
-- Cancel Appointment
-- View Reports
-- Access Medical Records
-
----
-
-## 👨‍⚕️ Doctor APIs
-- Manage Profile
-- Update Appointment Status
-- Access Patient Records
-- Create Medical Reports
-
----
-
-## 🧑‍💼 Admin APIs
-- Add Doctors
-- Delete Doctors
-- Manage Users
-- Dashboard Monitoring
-
----
-
-# 🔥 Key Highlights
-
-✔ Production-Ready Backend System  
-✔ Secure JWT Authentication  
-✔ Role-Based Authorization  
-✔ RESTful API Architecture  
-✔ Real-World Hospital Workflow  
-✔ Queue-Based Email Processing  
-✔ Cloud Deployment  
-✔ Swagger API Documentation  
-✔ Scalable Backend Design  
-
----
-
-# 📊 API Documentation
-
-Explore all APIs using Swagger UI:
-
-👉 https://medicore-p9x7.onrender.com/swagger-ui/index.html
-
----
-
-# 🌐 Live Application
-
-Frontend Live:
-
-👉 https://medicore-hms-six.vercel.app
-
-Backend Live:
-
-👉 https://medicore-p9x7.onrender.com
-
----
-
-# 🚀 Future Improvements
-
-- Kubernetes deployment
-- AI-based disease prediction
-- Payment integration
-- Real-time chat system
-- Mobile app support
-
----
-
-# 👨‍💻 Developer
-
-## Harsh Vathare
+Harsh Vathare
 Java Backend Developer
 
-Passionate about building scalable backend systems, secure REST APIs, and real-world software solutions using Java & Spring Boot.
+Focused on building scalable backend systems and real-world applications using Java and Spring Boot.
 
 ---
 
-# ⭐ Support
+## Feedback
 
-If you like this project, consider giving it a ⭐ on GitHub.
-
----
+If you have suggestions, feedback, or improvements, feel free to open an issue or connect with me.
